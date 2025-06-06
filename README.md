@@ -52,7 +52,28 @@ An application to allow calculations of monthly income and outgoings, providing 
     git branch -d feature/1-user-auth # delete local branch
     git push origin --delete feature/1-user-auth # delete remote branch</code>
 
-  
+<h2>MVP Overview</h2>
+
+<h3>Core Features</h3>
+- User authentication
+- Transaction Management Dashboard
+    - Record Income
+    - Record Fixed Expenditure
+    - Record Flexible Expenditure
+    - Present Full Budget
+    - Present Surplus
+    - Present Weekly Breakdown
+
+<h3>Future Enhancements</h3>
+- Frist time user flow
+- Reporting on trends
+- Email summaries
+- AI integration to suggest ways to save in line with contextual guidelines
+
+<h3>Tech Stack</h3>
+- Frontend: React.js and Tailwind CSS
+- API Layer: Node.js/Express RESTful API
+- Database: PostgreSQL
 
 
 
