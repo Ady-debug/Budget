@@ -1,7 +1,7 @@
 ---
 name: Technical Change Template
 about: Track engineering work not directly related to user stories
-title: 'Technical Change: <Short Summary>'
+title: 'TC: <Short Summary>'
 labels: technical change
 assignees: Ady-debug
 
