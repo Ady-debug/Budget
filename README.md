@@ -68,6 +68,8 @@ An application to allow calculations of monthly income and outgoings, providing 
 <h3>Future Enhancements</h3>
 
 - First time user flow
+- Tooltips to help guide how to use the application
+- Ability to track if items have been spent over the month
 - Reporting on trends
 - Email summaries
 - AI integration to suggest ways to save in line with contextual guidelines
