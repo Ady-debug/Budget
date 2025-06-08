@@ -55,6 +55,7 @@ An application to allow calculations of monthly income and outgoings, providing 
 <h2>MVP Overview</h2>
 
 <h3>Core Features</h3>
+
 - User authentication
 - Transaction Management Dashboard
     - Record Income
@@ -65,12 +66,14 @@ An application to allow calculations of monthly income and outgoings, providing 
     - Present Weekly Breakdown
 
 <h3>Future Enhancements</h3>
-- Frist time user flow
+
+- First time user flow
 - Reporting on trends
 - Email summaries
 - AI integration to suggest ways to save in line with contextual guidelines
 
 <h3>Tech Stack</h3>
+
 - Frontend: React.js and Tailwind CSS
 - API Layer: Node.js/Express RESTful API
 - Database: PostgreSQL
