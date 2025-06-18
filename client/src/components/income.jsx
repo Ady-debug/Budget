@@ -2,32 +2,54 @@ import React, { useState } from "react";
 
 export default function Income() {
 
-    let [incomeAmounts, setIncomeAmounts] = useState({
+    let [income, setIncome] = useState({
         wage: '',
         otherIncome: '',
     })
 
+    const [totalIncome, setTotalIncome] = useState('');
+
     function updateAmount(event) {
+
         const {name, value} = event.target;
 
-        setIncomeAmounts(prevItems => {
-            incomeAmounts = {
+        setIncome(prevItems => {
+            return {
                 ...prevItems,
-                [name]: [value]
+                [name]: Number(value)
             }
         })
 
-        console.table(incomeAmounts);
-      
+        console.table(income);
+        setTotalIncome(income.wage + income.otherIncome);
     }
 
     return (
         <form>
             <h2>Income</h2>
-            Wage <input name="wage" placeholder="£ per month" onChange={updateAmount} />
-            Other Income <input name="otherIncome" placeholder="£ per month" onChange={updateAmount} />
+            <label> 
+                Wage:  
+                <input 
+                    name="wage" 
+                    placeholder="£ per month" 
+                    onChange={updateAmount}
+                    value={income.wage}
+                />
+            </label>
+            <label>
+                Other Income: 
+                <input 
+                    name="otherIncome" 
+                    placeholder="£ per month" 
+                    onChange={updateAmount}
+                    value={income.otherIncome} 
+                />
+            </label> 
+            <p>Wage: {income.wage}</p>
+            <p>Other Income: {income.otherIncome}</p>
+            <p>Total: {totalIncome}</p>
         </form>
     )
 }
 
-//TODO: fix issue where setIncomeAmounts does not update object without wiping other field
+//TODO: fix issue where total doesn't update until space is added in fields
