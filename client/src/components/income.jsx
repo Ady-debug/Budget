@@ -42,8 +42,6 @@ export default function Income() {
                     value={income.otherIncome} 
                 />
             </label> 
-            <p>Wage: {income.wage}</p>
-            <p>Other Income: {income.otherIncome}</p>
             <p>Total: {totalIncome}</p>
         </form>
     )
