@@ -1,13 +1,13 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 export default function Income() {
 
     let [income, setIncome] = useState({
-        wage: '',
-        otherIncome: '',
+        wage: "",
+        otherIncome: "",
     })
 
-    const [totalIncome, setTotalIncome] = useState('');
+    const totalIncome = (income.wage) + (income.otherIncome);
 
     function updateAmount(event) {
 
@@ -19,9 +19,6 @@ export default function Income() {
                 [name]: Number(value)
             }
         })
-
-        console.table(income);
-        setTotalIncome(income.wage + income.otherIncome);
     }
 
     return (
@@ -31,16 +28,16 @@ export default function Income() {
                 Wage:  
                 <input 
                     name="wage" 
-                    placeholder="£ per month" 
+                    placeholder="£ per month"
                     onChange={updateAmount}
                     value={income.wage}
                 />
             </label>
             <label>
                 Other Income: 
-                <input 
+                <input
                     name="otherIncome" 
-                    placeholder="£ per month" 
+                    placeholder="£ per month"
                     onChange={updateAmount}
                     value={income.otherIncome} 
                 />
@@ -51,5 +48,3 @@ export default function Income() {
         </form>
     )
 }
-
-//TODO: fix issue where total doesn't update until space is added in fields
