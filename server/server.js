@@ -14,6 +14,10 @@ fastify.get("/", async (request, reply) => {
   return { hello: "World" };
 });
 
+fastify.post("/", async (request, reply) => {
+  return { hello: "World" };
+});
+
 const start = async () => {
   try {
     await fastify.listen({ port: 3000 });
@@ -24,3 +28,9 @@ const start = async () => {
 };
 
 start();
+
+// TODO:
+// - Diagram the below for future understanding
+// - Create route to GET income info
+// - Create route to POST user info
+// - Create api.js for API layer
