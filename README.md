@@ -77,8 +77,8 @@ An application to allow calculations of monthly income and outgoings, providing 
 <h3>Tech Stack</h3>
 
 - Frontend: React.js and Tailwind CSS
-- API Layer: Node.js/Express RESTful API
-- Database: PostgreSQL
+- API Layer: Node.js/Fastify RESTful API
+- Database: PostgreSQL (Supabase)
 
 
 
