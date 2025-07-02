@@ -16,5 +16,6 @@ CREATE TABLE income(
 CREATE INDEX idx_income_user_id ON income(user_id);
 
 -- TODO: Add foreign key constraints when full DB setup
--- Consider additional indexinfg
+-- Consider additional indexing
+-- Create RLS policy for viewing and INSERT/DELETE/UPDATE
 
