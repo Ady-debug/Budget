@@ -9,6 +9,16 @@ An application to allow calculations of monthly income and outgoings, providing 
 - Simplicity over complexity
 - D.R.Y. where possible
 
+<h2>Application Structure</h2>
+
+```mermaid
+graph TD;
+    Frontend["<b>Frontend</b><br/>React App<br/>client/src/main.jsx"]<-->API;
+    API["<b>API Client</b><br/>Javascript<br/>client/src/api.js"]<-->Server;
+    Server["<b>Server</b><br/>Fastify JS<br/>server/server.js"]<-->Database;
+    Database["<b>Database</b><br/>Postgres<br/>Supabase"]
+```
+
 <h2>Branching strategy</h2>
 
 <h3>Branch Structure</h3>
