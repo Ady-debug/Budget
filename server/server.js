@@ -1,13 +1,19 @@
 import "dotenv/config";
 import { createClient } from "@supabase/supabase-js";
 import Fastify from "fastify";
+import cors from "@fastify/cors";
 
-const supabaseUrl = process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_KEY;
-const supabase = createClient(supabaseUrl, supabaseKey);
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_KEY
+);
 
 const fastify = Fastify({
   logger: true,
+});
+
+await fastify.register(cors, {
+  origin: process.env.CLIENT_URL,
 });
 
 fastify.get("/api/income", async (request, reply) => {
