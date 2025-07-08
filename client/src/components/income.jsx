@@ -7,6 +7,18 @@ export default function Income() {
     otherIncome: "",
   });
 
+  useEffect(() => {
+    async function getStoredData() {
+      const data = await getIncome();
+      const storedIncome = { wage: "", otherIncome: "" };
+      data.income.forEach((item) => {
+        storedIncome[item.income_type] = item.amount;
+      });
+      setIncome(storedIncome);
+    }
+    getStoredData();
+  }, []);
+
   const totalIncome = income.wage + income.otherIncome;
 
   async function updateAmount(event) {
@@ -18,10 +30,6 @@ export default function Income() {
         [name]: Number(value),
       };
     });
-
-    // Test connection to DB through API layer
-    const data = await getIncome();
-    data.income.forEach((incomeType) => console.log(incomeType));
   }
 
   return (
