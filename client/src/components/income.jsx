@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getIncome } from "../../api";
+import { getIncome, updateIncome } from "../../api";
 
 export default function Income() {
   let [income, setIncome] = useState({
@@ -21,16 +21,26 @@ export default function Income() {
 
   const totalIncome = income.wage + income.otherIncome;
 
+  async function sendUpdatedIncome(income) {
+    await updateIncome(income);
+  }
+
   async function updateAmount(event) {
     const { name, value } = event.target;
 
     setIncome((prevItems) => {
-      return {
+      const updatedIncome = {
         ...prevItems,
         [name]: Number(value),
       };
+
+      sendUpdatedIncome(updatedIncome);
+      return updatedIncome;
     });
   }
+
+  // TODO:
+  // Add de-bounce to stop constant DB writes to update income
 
   return (
     <form>

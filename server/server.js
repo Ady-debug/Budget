@@ -30,20 +30,39 @@ fastify.get("/api/income", async (request, reply) => {
 });
 
 fastify.post("/api/income", async (request, reply) => {
-  console.log(request.body);
+  const data = request.body.income;
 
-  // UPDATE BELOW ONCE ROUTE TESTED IN API CLIENT
-  //   const { data, error } = await supabase
-  //     .from("income")
-  //     .insert([request.body])
-  //     .select();
+  try {
+    const updates = [];
 
-  //   if (error) {
-  //     reply.code(400).send({ error: error.message });
-  //     return;
-  //   }
+    if (data.wage !== undefined) {
+      const { data: wageData, error } = await supabase
+        .from("income")
+        .update({ amount: data.wage })
+        .eq("income_type", "wage")
+        .select();
 
-  //   return { income: data[0] };
+      if (error) throw error;
+
+      updates.push(...wageData);
+    }
+
+    if (data.otherIncome !== undefined) {
+      const { data: otherIncomeData, error } = await supabase
+        .from("income")
+        .update({ amount: data.otherIncome })
+        .eq("income_type", "otherIncome")
+        .select();
+
+      if (error) throw error;
+      updates.push(...otherIncomeData);
+    }
+
+    return { income: updates };
+  } catch (error) {
+    reply.code(400).send({ error: error.message });
+    return;
+  }
 });
 
 fastify.post("/", async (request, reply) => {
@@ -62,5 +81,4 @@ const start = async () => {
 start();
 
 // TODO:
-// - Create api.js for API layer
 // - Improve GET/POST ROUTES
