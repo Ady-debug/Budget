@@ -19,11 +19,18 @@ export default function Income() {
     getStoredData();
   }, []);
 
-  const totalIncome = income.wage + income.otherIncome;
+  useEffect(() => {
+    const updateData = setTimeout(() => {
+      async function sendUpdatedIncome(income) {
+        await updateIncome(income);
+      }
+      sendUpdatedIncome(income);
+    }, 2000);
 
-  async function sendUpdatedIncome(income) {
-    await updateIncome(income);
-  }
+    return () => clearTimeout(updateData);
+  }, [income]);
+
+  const totalIncome = income.wage + income.otherIncome;
 
   async function updateAmount(event) {
     const { name, value } = event.target;
@@ -34,13 +41,9 @@ export default function Income() {
         [name]: Number(value),
       };
 
-      sendUpdatedIncome(updatedIncome);
       return updatedIncome;
     });
   }
-
-  // TODO:
-  // Add de-bounce to stop constant DB writes to update income
 
   return (
     <form>
