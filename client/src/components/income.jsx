@@ -7,6 +7,14 @@ export default function Income() {
     otherIncome: "",
   });
 
+  const [hidden, setHidden] = useState(true);
+
+  const totalIncome = income.wage + income.otherIncome;
+
+  function renderTotalIncome() {
+    totalIncome > 0 ? setHidden(false) : setHidden(true);
+  }
+
   useEffect(() => {
     async function getStoredData() {
       const data = await getIncome();
@@ -26,15 +34,12 @@ export default function Income() {
       }
       sendUpdatedIncome(income);
     }, 2000);
-
+    renderTotalIncome();
     return () => clearTimeout(updateData);
   }, [income]);
 
-  const totalIncome = income.wage + income.otherIncome;
-
   async function updateAmount(event) {
     const { name, value } = event.target;
-
     setIncome((prevItems) => {
       const updatedIncome = {
         ...prevItems,
@@ -43,6 +48,7 @@ export default function Income() {
 
       return updatedIncome;
     });
+    renderTotalIncome();
   }
 
   return (
@@ -66,7 +72,7 @@ export default function Income() {
           value={income.otherIncome}
         />
       </label>
-      <p>Total: {totalIncome}</p>
+      <p hidden={hidden}>Total: {totalIncome}</p>
     </form>
   );
 }
