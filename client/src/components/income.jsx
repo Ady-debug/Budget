@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { getIncome, updateIncome } from "../../api";
 
 export default function Income() {
-  let [income, setIncome] = useState({
+  const [income, setIncome] = useState({
     wage: "",
     otherIncome: "",
   });
@@ -10,9 +10,10 @@ export default function Income() {
   const [hidden, setHidden] = useState(true);
 
   const totalIncome = income.wage + income.otherIncome;
+  const totalIncomeRounded = Math.round(totalIncome * 100) / 100;
 
   function renderTotalIncome() {
-    totalIncome > 0 ? setHidden(false) : setHidden(true);
+    totalIncomeRounded > 0 ? setHidden(false) : setHidden(true);
   }
 
   useEffect(() => {
@@ -40,15 +41,16 @@ export default function Income() {
 
   async function updateAmount(event) {
     const { name, value } = event.target;
+    const roundedValue = Math.round(value * 100) / 100;
+
     setIncome((prevItems) => {
       const updatedIncome = {
         ...prevItems,
-        [name]: Number(value),
+        [name]: value == "" ? "" : parseFloat(roundedValue),
       };
 
       return updatedIncome;
     });
-    renderTotalIncome();
   }
 
   return (
@@ -58,6 +60,8 @@ export default function Income() {
         Wage:
         <input
           name="wage"
+          type="number"
+          inputMode="decimal"
           placeholder="£ per month"
           onChange={updateAmount}
           value={income.wage}
@@ -67,12 +71,14 @@ export default function Income() {
         Other Income:
         <input
           name="otherIncome"
+          type="number"
+          inputMode="decimal"
           placeholder="£ per month"
           onChange={updateAmount}
           value={income.otherIncome}
         />
       </label>
-      <p hidden={hidden}>Total: {totalIncome}</p>
+      <p hidden={hidden}>Total: £{totalIncomeRounded}</p>
     </form>
   );
 }
