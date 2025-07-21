@@ -7,14 +7,8 @@ export default function Income() {
     otherIncome: "",
   });
 
-  const [hidden, setHidden] = useState(true);
-
   const totalIncome = income.wage + income.otherIncome;
   const totalIncomeRounded = Math.round(totalIncome * 100) / 100;
-
-  function renderTotalIncome() {
-    totalIncomeRounded > 0 ? setHidden(false) : setHidden(true);
-  }
 
   useEffect(() => {
     async function getStoredData() {
@@ -35,7 +29,6 @@ export default function Income() {
       }
       sendUpdatedIncome(income);
     }, 2000);
-    renderTotalIncome();
     return () => clearTimeout(updateData);
   }, [income]);
 
@@ -48,7 +41,6 @@ export default function Income() {
         ...prevItems,
         [name]: value == "" ? "" : parseFloat(roundedValue),
       };
-
       return updatedIncome;
     });
   }
@@ -78,7 +70,7 @@ export default function Income() {
           value={income.otherIncome}
         />
       </label>
-      <p hidden={hidden}>Total: £{totalIncomeRounded}</p>
+      <p>{totalIncomeRounded > 0 && `Total: £${totalIncomeRounded}`}</p>
     </form>
   );
 }
