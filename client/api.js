@@ -14,15 +14,19 @@ export async function getIncome() {
 }
 
 export async function updateIncome(income) {
-  try {
-    const response = await axios.post(`${SERVER_URL}/api/income`, {
-      income,
-    });
-  } catch (error) {
-    console.log(`Error updating income: ${error}`);
-    throw error;
+  console.log(income);
+  if (income.wage < 0 || income.otherIncome < 0) {
+    throw new Error("Amount must be more than 0");
+  } else {
+    try {
+      const response = await axios.post(`${SERVER_URL}/api/income`, {
+        income,
+      });
+    } catch (error) {
+      throw error;
+    }
   }
 }
 
 // TODO:
-// Consider improved error handling
+// Check error handling correct pattern and improve upon across layers. Check aligns to DB restrictions

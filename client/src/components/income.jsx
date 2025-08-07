@@ -6,6 +6,7 @@ export default function Income() {
     wage: "",
     otherIncome: "",
   });
+  const [error, setError] = useState(null);
 
   const totalIncome = income.wage + income.otherIncome;
   const totalIncomeRounded = Math.round(totalIncome * 100) / 100;
@@ -25,7 +26,12 @@ export default function Income() {
   useEffect(() => {
     const updateData = setTimeout(() => {
       async function sendUpdatedIncome(income) {
-        await updateIncome(income);
+        try {
+          await updateIncome(income);
+          setError(null);
+        } catch (error) {
+          setError(error);
+        }
       }
       sendUpdatedIncome(income);
     }, 2000);
@@ -48,6 +54,7 @@ export default function Income() {
   return (
     <form>
       <h2>Income</h2>
+      {error && <p style={{ color: "red" }}>{error.message}</p>}
       <label>
         Wage:
         <input
