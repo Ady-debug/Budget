@@ -7,18 +7,24 @@ export default function Income() {
     otherIncome: "",
   });
   const [error, setError] = useState(null);
+  const [dataLoaded, setDataLoaded] = useState(false);
 
   const totalIncome = income.wage + income.otherIncome;
   const totalIncomeRounded = Math.round(totalIncome * 100) / 100;
 
   useEffect(() => {
     async function getStoredData() {
-      const data = await getIncome();
-      const storedIncome = { wage: "", otherIncome: "" };
-      data.income.forEach((item) => {
-        storedIncome[item.income_type] = item.amount;
-      });
-      setIncome(storedIncome);
+      try {
+        const data = await getIncome();
+        const storedIncome = { wage: "", otherIncome: "" };
+        data.income.forEach((item) => {
+          storedIncome[item.income_type] = item.amount;
+        });
+        setIncome(storedIncome);
+        setDataLoaded(true);
+      } catch (error) {
+        setError(error);
+      }
     }
     getStoredData();
   }, []);
@@ -33,7 +39,7 @@ export default function Income() {
           setError(error);
         }
       }
-      sendUpdatedIncome(income);
+      dataLoaded === true && sendUpdatedIncome(income);
     }, 2000);
     return () => clearTimeout(updateData);
   }, [income]);
@@ -81,5 +87,3 @@ export default function Income() {
     </form>
   );
 }
-
-// TODO: - refactor to remove duplicate in useEffect?
