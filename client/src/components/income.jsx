@@ -46,6 +46,12 @@ export default function Income() {
 
   async function updateAmount(event) {
     const { name, value } = event.target;
+
+    if (isNaN(value)) {
+      setError("Please enter a number");
+      return;
+    }
+
     const roundedValue = Math.round(value * 100) / 100;
 
     setIncome((prevItems) => {
@@ -53,6 +59,7 @@ export default function Income() {
         ...prevItems,
         [name]: value == "" ? "" : parseFloat(roundedValue),
       };
+      setError(null);
       return updatedIncome;
     });
   }
