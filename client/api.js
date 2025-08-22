@@ -10,6 +10,9 @@ function validateField(value, fieldName) {
   if (value == null || isNaN(value)) {
     throw new Error(`Please enter a number for your ${fieldName}`);
   }
+  if (value > 99999999.99) {
+    throw new Error("Please enter an accurate income, the figure is too high");
+  }
 }
 
 export async function getIncome() {
@@ -18,7 +21,7 @@ export async function getIncome() {
     return response.data;
   } catch (error) {
     console.log(`Error getting income: ${error}`);
-    throw error;
+    throw new Error("There was an error getting your stored income figures");
   }
 }
 
@@ -37,7 +40,7 @@ export async function updateIncome(income) {
     return response.data;
   } catch (error) {
     console.error(`Error updating income: ${error.message}`);
-    throw error;
+    throw new Error("There was an error saving your income");
   }
 }
 
