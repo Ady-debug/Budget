@@ -10,7 +10,8 @@ export default function Income() {
   const [dataLoaded, setDataLoaded] = useState(false);
 
   const totalIncome = income.wage + income.otherIncome;
-  const totalIncomeRounded = Math.round(totalIncome * 100) / 100;
+  let totalIncomeRounded = Math.round(totalIncome * 100) / 100;
+  totalIncomeRounded = totalIncomeRounded.toFixed(2);
 
   useEffect(() => {
     async function getStoredData() {
