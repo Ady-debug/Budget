@@ -1,7 +1,6 @@
 import axios from "axios";
 
-// const SERVER_URL = import.meta.env.VITE_SERVER_URL;
-const SERVER_URL = "http://localhost:3000";
+const SERVER_URL = import.meta.env.VITE_SERVER_URL;
 
 function validateField(value, fieldName) {
   if (value < 0) {
@@ -43,6 +42,3 @@ export async function updateIncome(income) {
     throw new Error("There was an error saving your income");
   }
 }
-
-// TODO:
-// Look into option to remove hardcoded server and replace with environment variable
