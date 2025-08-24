@@ -67,7 +67,7 @@ export default function Income() {
 
   return (
     <form>
-      <h2>Income</h2>
+      <h2 className="text-blue-500">Income</h2>
       {error && <p style={{ color: "red" }}>{error.message}</p>}
       <label>
         Wage:
