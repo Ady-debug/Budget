@@ -66,10 +66,12 @@ export default function Income() {
   }
 
   return (
-    <form>
-      <h2 className="text-blue-500">Income</h2>
+    <form className="block max-w-sm p-6 bg-white/20 border border-white/30 rounded-lg shadow-sm dark:bg-white/10 dark:border-white/20 backdrop-blur-sm">
+      <h2 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+        Income
+      </h2>
       {error && <p style={{ color: "red" }}>{error.message}</p>}
-      <label>
+      <label className="font-normal text-gray-700 dark:text-gray-400">
         Wage:
         <input
           name="wage"
@@ -80,7 +82,7 @@ export default function Income() {
           value={income.wage}
         />
       </label>
-      <label>
+      <label className="font-normal text-gray-700 dark:text-gray-400">
         Other Income:
         <input
           name="otherIncome"
@@ -91,7 +93,9 @@ export default function Income() {
           value={income.otherIncome}
         />
       </label>
-      <p>{totalIncomeRounded > 0 && `Total: £${totalIncomeRounded}`}</p>
+      <p className="font-normal text-gray-700 dark:text-gray-400">
+        {totalIncomeRounded > 0 && `Total: £${totalIncomeRounded}`}
+      </p>
     </form>
   );
 }
