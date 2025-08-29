@@ -70,7 +70,7 @@ export default function Income() {
       <h2 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
         Income
       </h2>
-      {error && <p style={{ color: "red" }}>{error.message}</p>}
+      {error && <p className="font-bold text-red-400">{error.message}</p>}
       <label className="font-normal text-gray-700 dark:text-gray-400">
         Wage:
         <input
