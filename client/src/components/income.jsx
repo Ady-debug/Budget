@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { getIncome, updateIncome } from "../../api";
+import Card from "./card";
+import InputLabel from "./InputLabel";
+import Total from "./Total";
 
 export default function Income() {
   const [income, setIncome] = useState({
@@ -66,36 +69,32 @@ export default function Income() {
   }
 
   return (
-    <form className="block max-w-sm p-6 bg-white/20 border border-white/30 rounded-lg shadow-sm dark:bg-white/10 dark:border-white/20 backdrop-blur-sm">
-      <h2 className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-        Income
-      </h2>
-      {error && <p className="font-bold text-red-400">{error.message}</p>}
-      <label className="font-normal text-gray-700 dark:text-gray-400">
-        Wage:
-        <input
-          name="wage"
-          type="number"
-          inputMode="decimal"
-          placeholder="£ per month"
-          onChange={updateAmount}
-          value={income.wage}
-        />
-      </label>
-      <label className="font-normal text-gray-700 dark:text-gray-400">
-        Other Income:
-        <input
-          name="otherIncome"
-          type="number"
-          inputMode="decimal"
-          placeholder="£ per month"
-          onChange={updateAmount}
-          value={income.otherIncome}
-        />
-      </label>
-      <p className="font-normal text-gray-700 dark:text-gray-400">
-        {totalIncomeRounded > 0 && `Total: £${totalIncomeRounded}`}
-      </p>
-    </form>
+    <div>
+      <Card title="Income" error={error}>
+        <InputLabel title="Wage">
+          <input
+            name="wage"
+            type="number"
+            inputMode="decimal"
+            placeholder="£ per month"
+            onChange={updateAmount}
+            value={income.wage}
+          />
+        </InputLabel>
+        <InputLabel title="Other Income">
+          <input
+            name="otherIncome"
+            type="number"
+            inputMode="decimal"
+            placeholder="£ per month"
+            onChange={updateAmount}
+            value={income.otherIncome}
+          />
+        </InputLabel>
+        <Total total={totalIncomeRounded} />
+      </Card>
+    </div>
   );
 }
+
+//TODO: Improve styling of input areas
