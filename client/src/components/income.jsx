@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { getIncome, updateIncome } from "../../api";
 import Card from "./card";
-import InputLabel from "./InputLabel";
+import Input from "./Input";
 import Total from "./Total";
 
 export default function Income() {
@@ -71,26 +71,18 @@ export default function Income() {
   return (
     <div>
       <Card title="Income" error={error}>
-        <InputLabel title="Wage">
-          <input
-            name="wage"
-            type="number"
-            inputMode="decimal"
-            placeholder="£ per month"
-            onChange={updateAmount}
-            value={income.wage}
-          />
-        </InputLabel>
-        <InputLabel title="Other Income">
-          <input
-            name="otherIncome"
-            type="number"
-            inputMode="decimal"
-            placeholder="£ per month"
-            onChange={updateAmount}
-            value={income.otherIncome}
-          />
-        </InputLabel>
+        <Input
+          title="Wage"
+          name="wage"
+          onChange={updateAmount}
+          value={income.wage}
+        ></Input>
+        <Input
+          title="Other Income"
+          name="otherIncome"
+          onChange={updateAmount}
+          value={income.otherIncome}
+        ></Input>
         <Total total={totalIncomeRounded} />
       </Card>
     </div>
