@@ -2,7 +2,7 @@ import React from "react";
 
 export default function Card(props) {
   return (
-    <form className="block max-w-fit p-6 bg-white/20 border border-white/30 rounded-lg shadow-sm dark:bg-white/10 dark:border-white/20 backdrop-blur-sm">
+    <form className="block max-w-fit p-6 m-4 mx-auto bg-white/20 border border-white/30 rounded-lg shadow-sm dark:bg-white/10 dark:border-white/20 backdrop-blur-sm group hover:shadow-lg hover:shadow-blue-500/50 transition-shadow duration-300">
       <h2 className="mb-4 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
         {props.title}
       </h2>
