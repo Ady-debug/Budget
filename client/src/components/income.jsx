@@ -88,5 +88,3 @@ export default function Income() {
     </div>
   );
 }
-
-//TODO: Improve styling of input areas
