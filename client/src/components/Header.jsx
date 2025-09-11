@@ -10,3 +10,6 @@ export default function Header() {
     </header>
   );
 }
+
+// TODO: Finalise styling for header
+// TODO: Setup login route for authorisation
