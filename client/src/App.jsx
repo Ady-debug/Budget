@@ -2,6 +2,7 @@ import "./App.css";
 import Income from "./components/Income";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
+import HomeExpense from "./components/HomeExpense";
 
 function App() {
   return (
@@ -9,6 +10,7 @@ function App() {
       <Header />
       <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 justify-items-center max-w-6xl mx-auto">
         <Income />
+        <HomeExpense />
       </div>
       <Footer />
     </div>

@@ -12,9 +12,9 @@ export default function Income() {
   const [error, setError] = useState(null);
   const [dataLoaded, setDataLoaded] = useState(false);
 
-  const totalIncome = income.wage + income.otherIncome;
-  let totalIncomeRounded = Math.round(totalIncome * 100) / 100;
-  totalIncomeRounded = totalIncomeRounded.toFixed(2);
+  const total = income.wage + income.otherIncome;
+  let totalRounded = Math.round(total * 100) / 100;
+  totalRounded = totalRounded.toFixed(2);
 
   useEffect(() => {
     async function getStoredData() {
@@ -59,12 +59,12 @@ export default function Income() {
     const roundedValue = Math.round(value * 100) / 100;
 
     setIncome((prevItems) => {
-      const updatedIncome = {
+      const updatedAmount = {
         ...prevItems,
         [name]: value == "" ? "" : parseFloat(roundedValue),
       };
       setError(null);
-      return updatedIncome;
+      return updatedAmount;
     });
   }
 
@@ -83,7 +83,7 @@ export default function Income() {
           onChange={updateAmount}
           value={income.otherIncome}
         ></Input>
-        <Total total={totalIncomeRounded} />
+        <Total total={totalRounded} />
       </Card>
     </div>
   );

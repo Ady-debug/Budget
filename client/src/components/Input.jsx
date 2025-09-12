@@ -10,7 +10,7 @@ export default function Input(props) {
           name={props.name}
           type="number"
           inputMode="decimal"
-          placeholder="£ per month"
+          placeholder=" per month"
           onChange={props.onChange}
           value={props.value}
         ></input>
