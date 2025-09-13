@@ -1,37 +1,21 @@
 import React, { useEffect, useState } from "react";
-import { getIncome, updateIncome } from "../../api";
+import { updateIncome } from "../../api";
 import Card from "./card";
 import Input from "./Input";
 import Total from "./Total";
 
-export default function Income() {
+export default function Income(props) {
   const [income, setIncome] = useState({
-    wage: "",
-    otherIncome: "",
+    wage: props.data.wage,
+    otherIncome: props.data.otherIncome,
   });
   const [error, setError] = useState(null);
-  const [dataLoaded, setDataLoaded] = useState(false);
+
+  // TODO: Fix error where on refresh income state fails, potentially because props are only passed through on initial render. Use loaded state to ensure it isn't always wiped?
 
   const total = income.wage + income.otherIncome;
   let totalRounded = Math.round(total * 100) / 100;
   totalRounded = totalRounded.toFixed(2);
-
-  useEffect(() => {
-    async function getStoredData() {
-      try {
-        const data = await getIncome();
-        const storedIncome = { wage: "", otherIncome: "" };
-        data.income.forEach((item) => {
-          storedIncome[item.income_type] = item.amount;
-        });
-        setIncome(storedIncome);
-        setDataLoaded(true);
-      } catch (error) {
-        setError(error);
-      }
-    }
-    getStoredData();
-  }, []);
 
   useEffect(() => {
     const updateData = setTimeout(() => {
@@ -43,7 +27,7 @@ export default function Income() {
           setError(error);
         }
       }
-      dataLoaded === true && sendUpdatedIncome(income);
+      sendUpdatedIncome(income);
     }, 2000);
     return () => clearTimeout(updateData);
   }, [income]);

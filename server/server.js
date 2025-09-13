@@ -16,7 +16,7 @@ await fastify.register(cors, {
   origin: process.env.CLIENT_URL,
 });
 
-fastify.get("/api/income", async (request, reply) => {
+fastify.get("/api/budget", async (request, reply) => {
   const { data, error } = await supabase
     .from("income")
     .select("income_type,amount");

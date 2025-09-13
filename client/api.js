@@ -14,13 +14,13 @@ function validateField(value, fieldName) {
   }
 }
 
-export async function getIncome() {
+export async function getBudgetData() {
   try {
-    const response = await axios.get(`${SERVER_URL}/api/income`);
+    const response = await axios.get(`${SERVER_URL}/api/budget`);
     return response.data;
   } catch (error) {
     console.log(`Error getting income: ${error}`);
-    throw new Error("There was an error getting your stored income figures");
+    throw new Error("There was an error getting your stored budget figures");
   }
 }
 
