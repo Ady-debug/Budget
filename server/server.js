@@ -19,7 +19,7 @@ await fastify.register(cors, {
 fastify.get("/api/budget", async (request, reply) => {
   const { data, error } = await supabase
     .from("income")
-    .select("income_type,amount");
+    .select("budget_item,amount");
 
   if (error) {
     reply.code(500).send({ error: error.message });
@@ -39,7 +39,7 @@ fastify.post("/api/income", async (request, reply) => {
       const { data: wageData, error } = await supabase
         .from("income")
         .update({ amount: data.wage })
-        .eq("income_type", "wage")
+        .eq("budget_item", "wage")
         .select();
 
       if (error) throw error;
@@ -51,7 +51,7 @@ fastify.post("/api/income", async (request, reply) => {
       const { data: otherIncomeData, error } = await supabase
         .from("income")
         .update({ amount: data.otherIncome })
-        .eq("income_type", "otherIncome")
+        .eq("budget_item", "otherIncome")
         .select();
 
       if (error) throw error;

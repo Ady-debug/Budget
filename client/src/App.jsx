@@ -9,21 +9,31 @@ import HomeExpense from "./components/HomeExpense";
 function App() {
   const [budgetData, setBudgetData] = useState({
     income: { wage: "", otherIncome: "" },
+    homeExpense: { mortgage: "", councilTax: "" },
   });
   const [error, setError] = useState(null);
+
+  function transformArray(array) {
+    const transformedArray = array.reduce((acc, item) => {
+      acc[item.budget_item] = item.amount;
+      return acc;
+    }, {});
+    return transformedArray;
+  }
+
+  function transformBudgetData(data) {
+    const transformedEntries = Object.entries(data).map(([key, array]) => {
+      return [key, transformArray(array)];
+    });
+    return Object.fromEntries(transformedEntries);
+  }
 
   useEffect(() => {
     async function getStoredData() {
       try {
         const data = await getBudgetData();
-        const transformedData = data.income.reduce((acc, item) => {
-          acc[item.income_type] = item.amount;
-          return acc;
-        }, {});
-        setBudgetData({
-          ...budgetData,
-          income: transformedData,
-        });
+        const transformedEntries = transformBudgetData(data);
+        setBudgetData(transformedEntries);
       } catch (error) {
         setError(error);
       }
@@ -31,8 +41,7 @@ function App() {
     getStoredData();
   }, []);
 
-  //TODO: Review reduce method for understanding, use LLM guidance
-  //TODO: Refactor reduce method without LLM guidance to make it future proof for adding other objects such as Home Expenses etc.
+  //TODO: Review new functions and use Effect to cement understanding
   // TODO: Add top level error component for budget load errors, render a new <p> spanning page
 
   return (
