@@ -11,6 +11,7 @@ export default function Income(props) {
   });
   const [error, setError] = useState(null);
 
+  // TODO: Check shared state in App.jsx file
   // TODO: Fix error where on refresh income state fails, potentially because props are only passed through on initial render. Use loaded state to ensure it isn't always wiped?
 
   const total = income.wage + income.otherIncome;

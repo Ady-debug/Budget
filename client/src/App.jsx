@@ -13,23 +13,23 @@ function App() {
   });
   const [error, setError] = useState(null);
 
-  function transformArray(array) {
-    const transformedArray = array.reduce((acc, item) => {
-      acc[item.budget_item] = item.amount;
-      return acc;
-    }, {});
-    return transformedArray;
-  }
-
-  function transformBudgetData(data) {
-    const transformedEntries = Object.entries(data).map(([key, array]) => {
-      return [key, transformArray(array)];
-    });
-    return Object.fromEntries(transformedEntries);
-  }
-
   useEffect(() => {
     async function getStoredData() {
+      function transformArray(array) {
+        const transformedArray = array.reduce((acc, item) => {
+          acc[item.budget_item] = item.amount;
+          return acc;
+        }, {});
+        return transformedArray;
+      }
+
+      function transformBudgetData(data) {
+        const transformedEntries = Object.entries(data).map(([key, array]) => {
+          return [key, transformArray(array)];
+        });
+        return Object.fromEntries(transformedEntries);
+      }
+
       try {
         const data = await getBudgetData();
         const transformedEntries = transformBudgetData(data);
@@ -39,14 +39,18 @@ function App() {
       }
     }
     getStoredData();
+    setError(null);
   }, []);
 
   //TODO: Review new functions and use Effect to cement understanding
-  // TODO: Add top level error component for budget load errors, render a new <p> spanning page
+  // TODO: Ensure budgetData shared with required components
 
   return (
     <div className="flex flex-col bg-gradient-to-br from-blue-50 via-violet-200 to-teal-100 dark:from-slate-700 dark:via-indigo-900 dark:to-violet-900 min-h-screen">
       <Header />
+      {error && (
+        <p className="font-bold text-red-400 flex justify-center">{error}</p>
+      )}
       <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 justify-items-center max-w-6xl mx-auto">
         <Income data={budgetData.income} />
         <HomeExpense />
