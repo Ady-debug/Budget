@@ -6,17 +6,19 @@ import Total from "./Total";
 
 export default function Income(props) {
   const [income, setIncome] = useState({
-    wage: props.data.wage,
-    otherIncome: props.data.otherIncome,
+    wage: "",
+    otherIncome: "",
   });
   const [error, setError] = useState(null);
 
-  // TODO: Check shared state in App.jsx file
-  // TODO: Fix error where on refresh income state fails, potentially because props are only passed through on initial render. Use loaded state to ensure it isn't always wiped?
-
-  const total = income.wage + income.otherIncome;
-  let totalRounded = Math.round(total * 100) / 100;
-  totalRounded = totalRounded.toFixed(2);
+  useEffect(() => {
+    if (props.data) {
+      setIncome({
+        wage: props.data.wage || "",
+        otherIncome: props.data.otherIncome || "",
+      });
+    }
+  }, [props.data]);
 
   useEffect(() => {
     const updateData = setTimeout(() => {
@@ -52,6 +54,10 @@ export default function Income(props) {
       return updatedAmount;
     });
   }
+
+  const total = income.wage + income.otherIncome;
+  let totalRounded = Math.round(total * 100) / 100;
+  totalRounded = totalRounded.toFixed(2);
 
   return (
     <div>
