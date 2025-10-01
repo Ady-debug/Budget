@@ -18,15 +18,15 @@ await fastify.register(cors, {
 
 fastify.get("/api/budget", async (request, reply) => {
   const { data, error } = await supabase
-    .from("income")
-    .select("budget_item,amount");
+    .from("budget")
+    .select("budget_category,budget_item,amount");
 
   if (error) {
     reply.code(500).send({ error: error.message });
     return;
   }
 
-  return { income: data };
+  return { budget: data };
 });
 
 fastify.post("/api/income", async (request, reply) => {
@@ -37,7 +37,8 @@ fastify.post("/api/income", async (request, reply) => {
 
     if (data.wage !== undefined) {
       const { data: wageData, error } = await supabase
-        .from("income")
+        .from("budget")
+        .eq("budget_category", "income")
         .update({ amount: data.wage })
         .eq("budget_item", "wage")
         .select();
@@ -50,6 +51,7 @@ fastify.post("/api/income", async (request, reply) => {
     if (data.otherIncome !== undefined) {
       const { data: otherIncomeData, error } = await supabase
         .from("income")
+        .eq("budget_category", "income")
         .update({ amount: data.otherIncome })
         .eq("budget_item", "otherIncome")
         .select();
@@ -81,4 +83,4 @@ const start = async () => {
 start();
 
 // TODO:
-// - Improve GET/POST ROUTES
+// - Test routes setup with new budget table
