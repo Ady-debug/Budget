@@ -13,34 +13,32 @@ function App() {
   });
   const [error, setError] = useState(null);
 
-  // TODO: Update useEffect to correctly format data from new table
-
   useEffect(() => {
-    async function getStoredData() {
-      function transformArray(array) {
-        const transformedArray = array.reduce((acc, item) => {
-          acc[item.budget_item] = item.amount;
-          return acc;
-        }, {});
-        return transformedArray;
-      }
+    async function getDataFromAPI() {
+      function transformDataFromAPI(data) {
+        const budget = data.budget;
+        const transformedData = {};
 
-      function transformBudgetData(data) {
-        const transformedEntries = Object.entries(data).map(([key, array]) => {
-          return [key, transformArray(array)];
+        budget.forEach((entry) => {
+          if (!transformedData[entry.category]) {
+            transformedData[entry.category] = {};
+          }
+          transformedData[entry.category][entry.item] = entry.amount;
         });
-        return Object.fromEntries(transformedEntries);
+
+        return transformedData;
       }
 
       try {
         const data = await getBudgetData();
-        const transformedEntries = transformBudgetData(data);
-        setBudgetData(transformedEntries);
+        const transformedData = transformDataFromAPI(data);
+        setBudgetData(transformedData);
       } catch (error) {
         setError(error);
       }
     }
-    getStoredData();
+
+    getDataFromAPI();
     setError(null);
   }, []);
 
