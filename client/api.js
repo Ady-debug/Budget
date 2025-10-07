@@ -19,7 +19,7 @@ export async function getBudgetData() {
     const response = await axios.get(`${SERVER_URL}/api/budget`);
     return response.data;
   } catch (error) {
-    console.log(`Error getting budget information: ${error}`);
+    console.error(`Error getting budget information: ${error}`);
     throw new Error("There was an error getting your stored budget figures");
   }
 }

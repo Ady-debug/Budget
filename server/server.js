@@ -38,8 +38,8 @@ fastify.post("/api/income", async (request, reply) => {
     if (data.wage !== undefined) {
       const { data: wageData, error } = await supabase
         .from("budget")
-        .eq("category", "income")
         .update({ amount: data.wage })
+        .eq("category", "income")
         .eq("item", "wage")
         .select();
 
@@ -51,8 +51,8 @@ fastify.post("/api/income", async (request, reply) => {
     if (data.otherIncome !== undefined) {
       const { data: otherIncomeData, error } = await supabase
         .from("budget")
-        .eq("category", "income")
         .update({ amount: data.otherIncome })
+        .eq("category", "income")
         .eq("item", "otherIncome")
         .select();
 
@@ -81,6 +81,3 @@ const start = async () => {
 };
 
 start();
-
-// TODO:
-// - Test routes setup with new budget table
