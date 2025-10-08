@@ -10,7 +10,7 @@ function validateField(value, fieldName) {
     throw new Error(`Please enter a number for your ${fieldName}`);
   }
   if (value > 99999999.99) {
-    throw new Error("Please enter an accurate income, the figure is too high");
+    throw new Error("Please enter an accurate amount, the figure is too high");
   }
 }
 
@@ -40,5 +40,24 @@ export async function updateIncome(income) {
   } catch (error) {
     console.error(`Error updating income: ${error.message}`);
     throw new Error("There was an error saving your income");
+  }
+}
+
+export async function updateHomeExpense(homeExpense) {
+  if (!homeExpense || typeof homeExpense !== "object") {
+    throw new Error("Please enter your home expenses");
+  }
+
+  validateField(homeExpense.mortgage, "Mortgage");
+  validateField(homeExpense.councilTax, "Council Tax");
+
+  try {
+    const response = await axios.post(`${SERVER_URL}/api/home_expense`, {
+      homeExpense,
+    });
+    return response.data;
+  } catch (error) {
+    console.error(`Error updating home expenses: ${error.message}`);
+    throw new Error("There was an error saving your home expenses");
   }
 }

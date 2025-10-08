@@ -16,6 +16,8 @@ await fastify.register(cors, {
   origin: process.env.CLIENT_URL,
 });
 
+// GET Budget
+
 fastify.get("/api/budget", async (request, reply) => {
   const { data, error } = await supabase
     .from("budget")
@@ -28,6 +30,14 @@ fastify.get("/api/budget", async (request, reply) => {
 
   return { budget: data };
 });
+
+// POST Home Route Check
+
+fastify.post("/", async (request, reply) => {
+  return { hello: "World" };
+});
+
+// POST Income
 
 fastify.post("/api/income", async (request, reply) => {
   const data = request.body.income;
@@ -67,9 +77,47 @@ fastify.post("/api/income", async (request, reply) => {
   }
 });
 
-fastify.post("/", async (request, reply) => {
-  return { hello: "World" };
+// POST Home Expense
+
+fastify.post("/api/home_expense", async (request, reply) => {
+  const data = request.body.homeExpense;
+
+  try {
+    const updates = [];
+
+    if (data.mortgage !== undefined) {
+      const { data: mortgageData, error } = await supabase
+        .from("budget")
+        .update({ amount: data.mortgage })
+        .eq("category", "homeExpense")
+        .eq("item", "mortgage")
+        .select();
+
+      if (error) throw error;
+
+      updates.push(...mortgageData);
+    }
+
+    if (data.councilTax !== undefined) {
+      const { data: councilTaxData, error } = await supabase
+        .from("budget")
+        .update({ amount: data.councilTax })
+        .eq("category", "homeExpense")
+        .eq("item", "councilTax")
+        .select();
+
+      if (error) throw error;
+      updates.push(...councilTaxData);
+    }
+
+    return { income: updates };
+  } catch (error) {
+    reply.code(400).send({ error: error.message });
+    return;
+  }
 });
+
+// Server start
 
 const start = async () => {
   try {

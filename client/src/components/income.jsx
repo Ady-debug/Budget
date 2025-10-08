@@ -35,7 +35,7 @@ export default function Income(props) {
     return () => clearTimeout(updateData);
   }, [income]);
 
-  async function updateAmount(event) {
+  function updateAmount(event) {
     const { name, value } = event.target;
 
     if (isNaN(value)) {
