@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { updateHomeExpense } from "../../api";
 import Card from "./card";
 import Input from "./Input";
 import Total from "./Total";
@@ -19,9 +20,20 @@ export default function HomeExpense(props) {
     }
   }, [props.data]);
 
-  // TODO: Add API and POST route to update home expenses
-
-  // TODO: Add useEffect to update data on timeout (see Income component for more details)
+  useEffect(() => {
+    const updateData = setTimeout(() => {
+      async function sendHomeExpense(homeExpense) {
+        try {
+          await updateHomeExpense(homeExpense);
+          setError(null);
+        } catch (error) {
+          setError(error);
+        }
+      }
+      sendHomeExpense(homeExpense);
+    }, 2000);
+    return () => clearTimeout(updateData);
+  }, [homeExpense]);
 
   function updateAmount(event) {
     const { name, value } = event.target;
