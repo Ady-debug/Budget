@@ -81,6 +81,7 @@ fastify.post("/api/income", async (request, reply) => {
 
 fastify.post("/api/home_expense", async (request, reply) => {
   const data = request.body.homeExpense;
+  console.log(data);
 
   try {
     const updates = [];
@@ -110,7 +111,19 @@ fastify.post("/api/home_expense", async (request, reply) => {
       updates.push(...councilTaxData);
     }
 
-    return { income: updates };
+    if (data.homeInsurance !== undefined) {
+      const { data: homeInsuranceData, error } = await supabase
+        .from("budget")
+        .update({ amount: data.homeInsurance })
+        .eq("category", "homeExpense")
+        .eq("item", "homeInsurance")
+        .select();
+
+      if (error) throw error;
+      updates.push(...homeInsuranceData);
+    }
+
+    return { HomeExpense: updates };
   } catch (error) {
     reply.code(400).send({ error: error.message });
     return;

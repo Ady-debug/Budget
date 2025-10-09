@@ -50,6 +50,7 @@ export async function updateHomeExpense(homeExpense) {
 
   validateField(homeExpense.mortgage, "Mortgage");
   validateField(homeExpense.councilTax, "Council Tax");
+  validateField(homeExpense.homeInsurance, "Home Insurance");
 
   try {
     const response = await axios.post(`${SERVER_URL}/api/home_expense`, {

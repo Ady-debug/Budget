@@ -8,6 +8,7 @@ export default function HomeExpense(props) {
   const [homeExpense, setHomeExpense] = useState({
     mortgage: "",
     councilTax: "",
+    homeInsurance: "",
   });
   const [error, setError] = useState(null);
 
@@ -16,6 +17,7 @@ export default function HomeExpense(props) {
       setHomeExpense({
         mortgage: props.data.mortgage || "",
         councilTax: props.data.councilTax || "",
+        homeInsurance: props.data.homeInsurance || "",
       });
     }
   }, [props.data]);
@@ -73,6 +75,12 @@ export default function HomeExpense(props) {
           name="councilTax"
           onChange={updateAmount}
           value={homeExpense.councilTax}
+        ></Input>
+        <Input
+          title="Home & Contents Insurance"
+          name="homeInsurance"
+          onChange={updateAmount}
+          value={homeExpense.homeInsurance}
         ></Input>
         <Total total={totalRounded} />
       </Card>

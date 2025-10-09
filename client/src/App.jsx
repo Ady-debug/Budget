@@ -9,7 +9,7 @@ import HomeExpense from "./components/HomeExpense";
 function App() {
   const [budgetData, setBudgetData] = useState({
     income: { wage: "", otherIncome: "" },
-    homeExpense: { mortgage: "", councilTax: "" },
+    homeExpense: { mortgage: "", councilTax: "", homeInsurance: "" },
   });
   const [error, setError] = useState(null);
 
