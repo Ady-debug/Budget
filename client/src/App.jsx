@@ -10,6 +10,20 @@ function App() {
   const [budgetData, setBudgetData] = useState({
     income: { wage: "", otherIncome: "" },
     homeExpense: { mortgage: "", councilTax: "", homeInsurance: "" },
+    utilities: { gas: "", electricity: "", water: "" },
+    servicesAndSubscriptions: { phone: "", broadband: "", subscriptions: "" },
+    transportAndTravel: {
+      vehicleInsurance: "",
+      roadTax: "",
+      fuel: "",
+      breakdownCover: "",
+      MOTAndServices: "",
+      railAndBus: "",
+    },
+    personal: { clothingAndFootwear: "", hairdressing: "" },
+    pets: { petFood: "", insurance: "" },
+    foodAndShopping: { supermarketShopping: "", mealsOut: "" },
+    accountsAndSavings: { accountFees: "", savings: "" },
   });
   const [error, setError] = useState(null);
 
@@ -58,3 +72,10 @@ function App() {
 }
 
 export default App;
+
+//TODO:
+// Update state to echo data structure from server
+// Create endpoints to pull back information from the database for each category
+// Update API layer to interface with server
+// Create cards for each category
+// See US#42 for categories
