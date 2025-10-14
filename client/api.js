@@ -62,3 +62,23 @@ export async function updateHomeExpense(homeExpense) {
     throw new Error("There was an error saving your home expenses");
   }
 }
+
+export async function updateUtilities(utilities) {
+  if (!utilities || typeof utilities !== "object") {
+    throw new Error("Please enter your utility expenses");
+  }
+
+  validateField(utilities.gas, "Gas");
+  validateField(utilities.electricity, "Electricity");
+  validateField(utilities.water, "Water");
+
+  try {
+    const response = await axios.post(`${SERVER_URL}/api/utilities`, {
+      utilities,
+    });
+    return response.data;
+  } catch (error) {
+    console.error(`Error updating utilities: ${error.message}`);
+    throw new Error("There was an error saving your utilities");
+  }
+}

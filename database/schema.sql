@@ -13,6 +13,21 @@ CREATE TABLE budget(
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Create function to auto-update updated_at
+CREATE OR REPLACE FUNCTION auto_update_timestamp()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = CURRENT_TIMESTAMP;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Create trigger to automatically update updated_at on any UPDATE
+CREATE TRIGGER set_updated_at
+BEFORE UPDATE ON budget
+FOR EACH ROW
+EXECUTE FUNCTION auto_update_timestamp();
+
 -- Indexes for better query performance
 CREATE INDEX idx_budget_user_id ON budget(user_id);
 

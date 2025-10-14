@@ -123,7 +123,59 @@ fastify.post("/api/home_expense", async (request, reply) => {
       updates.push(...homeInsuranceData);
     }
 
-    return { HomeExpense: updates };
+    return { homeExpense: updates };
+  } catch (error) {
+    reply.code(400).send({ error: error.message });
+    return;
+  }
+});
+
+// POST Utilities
+
+fastify.post("/api/utilities", async (request, reply) => {
+  const data = request.body.utilities;
+
+  try {
+    const updates = [];
+
+    if (data.gas !== undefined) {
+      const { data: utilitiesData, error } = await supabase
+        .from("budget")
+        .update({ amount: data.gas })
+        .eq("category", "utilities")
+        .eq("item", "gas")
+        .select();
+
+      if (error) throw error;
+
+      updates.push(...utilitiesData);
+    }
+
+    if (data.electricity !== undefined) {
+      const { data: utilitiesData, error } = await supabase
+        .from("budget")
+        .update({ amount: data.electricity })
+        .eq("category", "utilities")
+        .eq("item", "electricity")
+        .select();
+
+      if (error) throw error;
+      updates.push(...utilitiesData);
+    }
+
+    if (data.water !== undefined) {
+      const { data: utilitiesData, error } = await supabase
+        .from("budget")
+        .update({ amount: data.water })
+        .eq("category", "utilities")
+        .eq("item", "water")
+        .select();
+
+      if (error) throw error;
+      updates.push(...utilitiesData);
+    }
+
+    return { utilities: updates };
   } catch (error) {
     reply.code(400).send({ error: error.message });
     return;
