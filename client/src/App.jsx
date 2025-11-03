@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { getBudgetData } from "../api";
 import "./App.css";
-import Income from "./components/Income";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
+import Income from "./components/Income";
 import HomeExpense from "./components/HomeExpense";
+import Utilities from "./components/Utilities";
 
 function App() {
   const [budgetData, setBudgetData] = useState({
@@ -65,6 +66,7 @@ function App() {
       <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 justify-items-center max-w-6xl mx-auto">
         <Income data={budgetData.income} />
         <HomeExpense data={budgetData.homeExpense} />
+        <Utilities data={budgetData.utilities} />
       </div>
       <Footer />
     </div>
