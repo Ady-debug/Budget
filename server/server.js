@@ -33,7 +33,7 @@ fastify.get("/api/budget", async (request, reply) => {
 
 // POST Home Route Check
 
-fastify.post("/", async (request, reply) => {
+fastify.get("/", async (request, reply) => {
   return { hello: "World" };
 });
 
