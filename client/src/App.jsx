@@ -75,7 +75,7 @@ function App() {
 
 export default App;
 
-//TODO:
+//TODO: see list...
 // Update state to echo data structure from server - DONE
 // Create endpoints to pull back information from the database for each category
 // Update API layer to interface with server

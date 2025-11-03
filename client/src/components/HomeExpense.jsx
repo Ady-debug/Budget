@@ -87,7 +87,3 @@ export default function HomeExpense(props) {
     </div>
   );
 }
-
-// TODO: Setup DB schema
-// TODO: Setup API routes
-// TODO: Setup data loaded state and setup data/send data useEffect functions
