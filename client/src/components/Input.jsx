@@ -2,7 +2,7 @@ import React from "react";
 
 export default function Input(props) {
   return (
-    <label className="font-normal text-gray-700 dark:text-gray-400 flex gap-5 mb-1">
+    <label className="font-normal text-sm text-gray-700 dark:text-gray-400 flex gap-5 mb-1">
       <span className="w-30">{props.title}:</span>
       <div className="before:content-['£']">
         <input
