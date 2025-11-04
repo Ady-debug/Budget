@@ -66,7 +66,7 @@ export default function ServicesAndSubscriptions(props) {
 
   return (
     <div>
-      <Card title="Home Expenses" error={error}>
+      <Card title="Services and Subscriptions" error={error}>
         <Input
           title="Phone"
           name="phone"
