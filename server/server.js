@@ -182,7 +182,57 @@ fastify.post("/api/utilities", async (request, reply) => {
   }
 });
 
-// TODO: POST ServicesAndSubscriptions
+// POST ServicesAndSubscriptions
+
+fastify.post("/api/servicesandsubscriptions", async (request, reply) => {
+  const data = request.body.servicesAndSubscriptions;
+
+  try {
+    const updates = [];
+
+    if (data.phone !== undefined) {
+      const { data: servicesAndSubscriptionsData, error } = await supabase
+        .from("budget")
+        .update({ amount: data.phone })
+        .eq("category", "servicesAndSubscriptions")
+        .eq("item", "phone")
+        .select();
+
+      if (error) throw error;
+
+      updates.push(...servicesAndSubscriptionsData);
+    }
+
+    if (data.broadband !== undefined) {
+      const { data: servicesAndSubscriptionsData, error } = await supabase
+        .from("budget")
+        .update({ amount: data.broadband })
+        .eq("category", "servicesAndSubscriptions")
+        .eq("item", "broadband")
+        .select();
+
+      if (error) throw error;
+      updates.push(...servicesAndSubscriptionsData);
+    }
+
+    if (data.subscriptions !== undefined) {
+      const { data: servicesAndSubscriptionsData, error } = await supabase
+        .from("budget")
+        .update({ amount: data.subscriptions })
+        .eq("category", "servicesAndSubscriptions")
+        .eq("item", "subscriptions")
+        .select();
+
+      if (error) throw error;
+      updates.push(...servicesAndSubscriptionsData);
+    }
+
+    return { servicesAndSubscriptions: updates };
+  } catch (error) {
+    reply.code(400).send({ error: error.message });
+    return;
+  }
+});
 
 // Server start
 

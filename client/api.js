@@ -83,4 +83,32 @@ export async function updateUtilities(utilities) {
   }
 }
 
-// TODO: updateServicesAndSubscriptions...
+export async function updateServicesAndSubscriptions(servicesAndSubscriptions) {
+  if (
+    !servicesAndSubscriptions ||
+    typeof servicesAndSubscriptions !== "object"
+  ) {
+    throw new Error("Please enter your service and subscription expenses");
+  }
+
+  validateField(servicesAndSubscriptions.phone, "Phone");
+  validateField(servicesAndSubscriptions.broadband, "Broadband");
+  validateField(servicesAndSubscriptions.subscriptions, "Subscriptions");
+
+  try {
+    const response = await axios.post(
+      `${SERVER_URL}/api/servicesandsubscriptions`,
+      {
+        servicesAndSubscriptions,
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error(
+      `Error updating services and subscriptions: ${error.message}`
+    );
+    throw new Error(
+      "There was an error saving your services and subscriptions"
+    );
+  }
+}
