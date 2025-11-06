@@ -234,6 +234,94 @@ fastify.post("/api/servicesandsubscriptions", async (request, reply) => {
   }
 });
 
+// POST TransportAndTravel
+
+fastify.post("/api/transportandtravel", async (request, reply) => {
+  const data = request.body.transportAndTravel;
+
+  try {
+    const updates = [];
+
+    if (data.vehicleInsurance !== undefined) {
+      const { data: transportAndTravelData, error } = await supabase
+        .from("budget")
+        .update({ amount: data.vehicleInsurance })
+        .eq("category", "transportAndTravel")
+        .eq("item", "vehicleInsurance")
+        .select();
+
+      if (error) throw error;
+
+      updates.push(...transportAndTravelData);
+    }
+
+    if (data.roadTax !== undefined) {
+      const { data: transportAndTravelData, error } = await supabase
+        .from("budget")
+        .update({ amount: data.roadTax })
+        .eq("category", "transportAndTravel")
+        .eq("item", "roadTax")
+        .select();
+
+      if (error) throw error;
+      updates.push(...transportAndTravelData);
+    }
+
+    if (data.fuel !== undefined) {
+      const { data: transportAndTravelData, error } = await supabase
+        .from("budget")
+        .update({ amount: data.fuel })
+        .eq("category", "transportAndTravel")
+        .eq("item", "fuel")
+        .select();
+
+      if (error) throw error;
+      updates.push(...transportAndTravelData);
+    }
+
+    if (data.breakdownCover !== undefined) {
+      const { data: transportAndTravelData, error } = await supabase
+        .from("budget")
+        .update({ amount: data.breakdownCover })
+        .eq("category", "transportAndTravel")
+        .eq("item", "breakdownCover")
+        .select();
+
+      if (error) throw error;
+      updates.push(...transportAndTravelData);
+    }
+
+    if (data.MOTAndServices !== undefined) {
+      const { data: transportAndTravelData, error } = await supabase
+        .from("budget")
+        .update({ amount: data.MOTAndServices })
+        .eq("category", "transportAndTravel")
+        .eq("item", "MOTAndServices")
+        .select();
+
+      if (error) throw error;
+      updates.push(...transportAndTravelData);
+    }
+
+    if (data.railAndBus !== undefined) {
+      const { data: transportAndTravelData, error } = await supabase
+        .from("budget")
+        .update({ amount: data.railAndBus })
+        .eq("category", "transportAndTravel")
+        .eq("item", "railAndBus")
+        .select();
+
+      if (error) throw error;
+      updates.push(...transportAndTravelData);
+    }
+
+    return { transportAndTravel: updates };
+  } catch (error) {
+    reply.code(400).send({ error: error.message });
+    return;
+  }
+});
+
 // Server start
 
 const start = async () => {

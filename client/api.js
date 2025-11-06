@@ -112,3 +112,28 @@ export async function updateServicesAndSubscriptions(servicesAndSubscriptions) {
     );
   }
 }
+
+export async function updatetransportAndTravel(transportAndTravel) {
+  if (!transportAndTravel || typeof transportAndTravel !== "object") {
+    throw new Error("Please enter your transport and travel costs");
+  }
+
+  validateField(transportAndTravel.vehicleInsurance, "Vehicle Insurance");
+  validateField(transportAndTravel.roadTax, "Road Tax");
+  validateField(transportAndTravel.fuel, "Fuel");
+  validateField(transportAndTravel.breakdownCover, "Breakdown Cover");
+  validateField(transportAndTravel.MOTAndServices, "MOT and Services");
+  validateField(transportAndTravel.railAndBus, "Rail and Bus");
+
+  try {
+    const response = await axios.post(`${SERVER_URL}/api/transportandtravel`, {
+      transportAndTravel,
+    });
+    return response.data;
+  } catch (error) {
+    console.error(`Error updating transport and travel: ${error.message}`);
+    throw new Error(
+      "There was an error saving your transport and travel costs"
+    );
+  }
+}
