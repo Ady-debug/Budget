@@ -113,7 +113,7 @@ export async function updateServicesAndSubscriptions(servicesAndSubscriptions) {
   }
 }
 
-export async function updatetransportAndTravel(transportAndTravel) {
+export async function updateTransportAndTravel(transportAndTravel) {
   if (!transportAndTravel || typeof transportAndTravel !== "object") {
     throw new Error("Please enter your transport and travel costs");
   }
