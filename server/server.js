@@ -362,6 +362,46 @@ fastify.post("/api/personal", async (request, reply) => {
   }
 });
 
+// POST Pets
+
+fastify.post("/api/pets", async (request, reply) => {
+  const data = request.body.pets;
+
+  try {
+    const updates = [];
+
+    if (data.petFood !== undefined) {
+      const { data: petsData, error } = await supabase
+        .from("budget")
+        .update({ amount: data.petFood })
+        .eq("category", "pets")
+        .eq("item", "petFood")
+        .select();
+
+      if (error) throw error;
+
+      updates.push(...petsData);
+    }
+
+    if (data.insurance !== undefined) {
+      const { data: petsData, error } = await supabase
+        .from("budget")
+        .update({ amount: data.insurance })
+        .eq("category", "pets")
+        .eq("item", "insurance")
+        .select();
+
+      if (error) throw error;
+      updates.push(...petsData);
+    }
+
+    return { pets: updates };
+  } catch (error) {
+    reply.code(400).send({ error: error.message });
+    return;
+  }
+});
+
 // Server start
 
 const start = async () => {

@@ -156,3 +156,22 @@ export async function updatePersonal(personal) {
     throw new Error("There was an error saving your personal costs");
   }
 }
+
+export async function updatePets(pets) {
+  if (!pets || typeof pets !== "object") {
+    throw new Error("Please enter your pet costs");
+  }
+
+  validateField(pets.clothingAndFootwear, "Clothing and Footwear");
+  validateField(pets.hairdressing, "Hairdressing");
+
+  try {
+    const response = await axios.post(`${SERVER_URL}/api/pets`, {
+      pets,
+    });
+    return response.data;
+  } catch (error) {
+    console.error(`Error updating pets: ${error.message}`);
+    throw new Error("There was an error saving your pet costs");
+  }
+}
