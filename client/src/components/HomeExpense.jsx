@@ -57,7 +57,8 @@ export default function HomeExpense(props) {
     });
   }
 
-  const total = homeExpense.mortgage + homeExpense.councilTax;
+  const total =
+    homeExpense.mortgage + homeExpense.councilTax + homeExpense.homeInsurance;
   let totalRounded = Math.round(total * 100) / 100;
   totalRounded = totalRounded.toFixed(2);
 
