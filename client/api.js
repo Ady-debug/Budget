@@ -162,8 +162,8 @@ export async function updatePets(pets) {
     throw new Error("Please enter your pet costs");
   }
 
-  validateField(pets.clothingAndFootwear, "Clothing and Footwear");
-  validateField(pets.hairdressing, "Hairdressing");
+  validateField(pets.petFood, "Pet Food");
+  validateField(pets.insurance, "Insurance");
 
   try {
     const response = await axios.post(`${SERVER_URL}/api/pets`, {
