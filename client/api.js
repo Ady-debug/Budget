@@ -137,3 +137,22 @@ export async function updateTransportAndTravel(transportAndTravel) {
     );
   }
 }
+
+export async function updatePersonal(personal) {
+  if (!personal || typeof personal !== "object") {
+    throw new Error("Please enter your personal costs");
+  }
+
+  validateField(personal.clothingAndFootwear, "Clothing and Footwear");
+  validateField(personal.hairdressing, "Hairdressing");
+
+  try {
+    const response = await axios.post(`${SERVER_URL}/api/personal`, {
+      personal,
+    });
+    return response.data;
+  } catch (error) {
+    console.error(`Error updating personal: ${error.message}`);
+    throw new Error("There was an error saving your personal costs");
+  }
+}

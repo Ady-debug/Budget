@@ -182,7 +182,7 @@ fastify.post("/api/utilities", async (request, reply) => {
   }
 });
 
-// POST ServicesAndSubscriptions
+// POST Services and Subscriptions
 
 fastify.post("/api/servicesandsubscriptions", async (request, reply) => {
   const data = request.body.servicesAndSubscriptions;
@@ -234,7 +234,7 @@ fastify.post("/api/servicesandsubscriptions", async (request, reply) => {
   }
 });
 
-// POST TransportAndTravel
+// POST Transport and Travel
 
 fastify.post("/api/transportandtravel", async (request, reply) => {
   const data = request.body.transportAndTravel;
@@ -316,6 +316,46 @@ fastify.post("/api/transportandtravel", async (request, reply) => {
     }
 
     return { transportAndTravel: updates };
+  } catch (error) {
+    reply.code(400).send({ error: error.message });
+    return;
+  }
+});
+
+// POST Personal Costs
+
+fastify.post("/api/personal", async (request, reply) => {
+  const data = request.body.personal;
+
+  try {
+    const updates = [];
+
+    if (data.clothingAndFootwear !== undefined) {
+      const { data: personalData, error } = await supabase
+        .from("budget")
+        .update({ amount: data.clothingAndFootwear })
+        .eq("category", "personal")
+        .eq("item", "clothingAndFootwear")
+        .select();
+
+      if (error) throw error;
+
+      updates.push(...personalData);
+    }
+
+    if (data.hairdressing !== undefined) {
+      const { data: personalData, error } = await supabase
+        .from("budget")
+        .update({ amount: data.hairdressing })
+        .eq("category", "personal")
+        .eq("item", "hairdressing")
+        .select();
+
+      if (error) throw error;
+      updates.push(...personalData);
+    }
+
+    return { personal: updates };
   } catch (error) {
     reply.code(400).send({ error: error.message });
     return;
