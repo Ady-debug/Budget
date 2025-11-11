@@ -10,6 +10,7 @@ import ServicesAndSubscriptions from "./components/ServicesAndSubscriptions";
 import TransportAndTravel from "./components/TransportAndTravel";
 import Personal from "./components/Personal";
 import Pets from "./components/Pets";
+import FoodAndShopping from "./components/FoodAndShopping";
 
 function App() {
   const [budgetData, setBudgetData] = useState({
@@ -75,6 +76,7 @@ function App() {
         <TransportAndTravel data={budgetData.transportAndTravel} />
         <Personal data={budgetData.personal} />
         <Pets data={budgetData.pets} />
+        <FoodAndShopping data={budgetData.foodAndShopping} />
       </div>
       <Footer />
     </div>
