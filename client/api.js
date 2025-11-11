@@ -175,3 +175,22 @@ export async function updatePets(pets) {
     throw new Error("There was an error saving your pet costs");
   }
 }
+
+export async function updateFoodAndShopping(foodAndShopping) {
+  if (!foodAndShopping || typeof foodAndShopping !== "object") {
+    throw new Error("Please enter your food and shopping costs");
+  }
+
+  validateField(foodAndShopping.supermarketShopping, "Supermarket Shopping");
+  validateField(foodAndShopping.mealsOut, "Meals Out");
+
+  try {
+    const response = await axios.post(`${SERVER_URL}/api/foodandshopping`, {
+      foodAndShopping,
+    });
+    return response.data;
+  } catch (error) {
+    console.error(`Error updating foodAndShopping: ${error.message}`);
+    throw new Error("There was an error saving your food and shopping costs");
+  }
+}

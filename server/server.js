@@ -402,6 +402,46 @@ fastify.post("/api/pets", async (request, reply) => {
   }
 });
 
+// POST Food and Shopping
+
+fastify.post("/api/foodandshopping", async (request, reply) => {
+  const data = request.body.foodAndShopping;
+
+  try {
+    const updates = [];
+
+    if (data.supermarketShopping !== undefined) {
+      const { data: foodAndShoppingData, error } = await supabase
+        .from("budget")
+        .update({ amount: data.supermarketShopping })
+        .eq("category", "foodAndShopping")
+        .eq("item", "supermarketShopping")
+        .select();
+
+      if (error) throw error;
+
+      updates.push(...foodAndShoppingData);
+    }
+
+    if (data.mealsOut !== undefined) {
+      const { data: foodAndShoppingData, error } = await supabase
+        .from("budget")
+        .update({ amount: data.mealsOut })
+        .eq("category", "foodAndShopping")
+        .eq("item", "mealsOut")
+        .select();
+
+      if (error) throw error;
+      updates.push(...foodAndShoppingData);
+    }
+
+    return { foodAndShopping: updates };
+  } catch (error) {
+    reply.code(400).send({ error: error.message });
+    return;
+  }
+});
+
 // Server start
 
 const start = async () => {
