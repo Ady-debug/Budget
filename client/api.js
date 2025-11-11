@@ -194,3 +194,24 @@ export async function updateFoodAndShopping(foodAndShopping) {
     throw new Error("There was an error saving your food and shopping costs");
   }
 }
+
+export async function updateAccountsAndSavings(accountsAndSavings) {
+  if (!accountsAndSavings || typeof accountsAndSavings !== "object") {
+    throw new Error("Please enter your accounts and savings costs");
+  }
+
+  validateField(accountsAndSavings.accountFees, "Account Fees");
+  validateField(accountsAndSavings.savings, "Savings");
+
+  try {
+    const response = await axios.post(`${SERVER_URL}/api/accountsandsavings`, {
+      accountsAndSavings,
+    });
+    return response.data;
+  } catch (error) {
+    console.error(`Error updating accountsAndSavings: ${error.message}`);
+    throw new Error(
+      "There was an error saving your accounts and savings costs"
+    );
+  }
+}

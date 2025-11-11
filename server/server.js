@@ -442,6 +442,46 @@ fastify.post("/api/foodandshopping", async (request, reply) => {
   }
 });
 
+// POST Accounts and Savings
+
+fastify.post("/api/accountsandsavings", async (request, reply) => {
+  const data = request.body.accountsAndSavings;
+
+  try {
+    const updates = [];
+
+    if (data.accountFees !== undefined) {
+      const { data: accountsAndSavingsData, error } = await supabase
+        .from("budget")
+        .update({ amount: data.accountFees })
+        .eq("category", "accountsAndSavings")
+        .eq("item", "accountFees")
+        .select();
+
+      if (error) throw error;
+
+      updates.push(...accountsAndSavingsData);
+    }
+
+    if (data.savings !== undefined) {
+      const { data: accountsAndSavingsData, error } = await supabase
+        .from("budget")
+        .update({ amount: data.savings })
+        .eq("category", "accountsAndSavings")
+        .eq("item", "savings")
+        .select();
+
+      if (error) throw error;
+      updates.push(...accountsAndSavingsData);
+    }
+
+    return { accountsAndSavings: updates };
+  } catch (error) {
+    reply.code(400).send({ error: error.message });
+    return;
+  }
+});
+
 // Server start
 
 const start = async () => {
