@@ -75,7 +75,7 @@ export default function TransportAndTravel(props) {
 
   return (
     <div>
-      <Card title="Transport And Travel" error={error}>
+      <Card title="Transport and Travel" error={error}>
         <Input
           title="Vehicle Insurance"
           name="vehicleInsurance"
