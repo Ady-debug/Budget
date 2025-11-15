@@ -66,13 +66,21 @@ export default function Income(props) {
           title="Wage"
           name="wage"
           onChange={updateAmount}
-          value={income.wage}
+          value={
+            typeof income.wage === "number"
+              ? income.wage.toFixed(2)
+              : income.wage
+          }
         ></Input>
         <Input
           title="Other Income"
           name="otherIncome"
           onChange={updateAmount}
-          value={income.otherIncome}
+          value={
+            typeof income.otherIncome === "number"
+              ? income.otherIncome.toFixed(2)
+              : income.otherIncome
+          }
         ></Input>
         <Total total={totalRounded} />
       </Card>
