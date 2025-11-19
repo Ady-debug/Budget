@@ -8,8 +8,7 @@ export default function Input(props) {
         <input
           className="w-17 border rounded-lg border-transparent group-hover:border-indigo-500 transition-colors duration-100"
           name={props.name}
-          type="number"
-          inputMode="decimal"
+          type="text"
           placeholder=" per month"
           onChange={props.onChange}
           value={props.value}

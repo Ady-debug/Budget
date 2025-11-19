@@ -14,8 +14,8 @@ export default function Income(props) {
   useEffect(() => {
     if (props.data) {
       setIncome({
-        wage: props.data.wage || "",
-        otherIncome: props.data.otherIncome || "",
+        wage: parseFloat(props.data.wage).toFixed(2),
+        otherIncome: parseFloat(props.data.otherIncome).toFixed(2),
       });
     }
   }, [props.data]);
@@ -38,26 +38,25 @@ export default function Income(props) {
   function updateAmount(event) {
     const { name, value } = event.target;
 
-    if (isNaN(value)) {
+    const valueToNumber = parseFloat(value);
+
+    if (isNaN(valueToNumber)) {
       setError("Please enter a number");
       return;
     }
 
-    const roundedValue = Math.round(value * 100) / 100;
-
     setIncome((prevItems) => {
       const updatedAmount = {
         ...prevItems,
-        [name]: value == "" ? "" : parseFloat(roundedValue),
+        [name]: value == "" ? "" : value,
       };
       setError(null);
       return updatedAmount;
     });
   }
 
-  const total = income.wage + income.otherIncome;
-  let totalRounded = Math.round(total * 100) / 100;
-  totalRounded = totalRounded.toFixed(2);
+  let total = parseFloat(income.wage) + parseFloat(income.otherIncome);
+  total = total.toFixed(2);
 
   return (
     <div>
@@ -74,7 +73,7 @@ export default function Income(props) {
           onChange={updateAmount}
           value={income.otherIncome}
         ></Input>
-        <Total total={totalRounded} />
+        <Total total={total} />
       </Card>
     </div>
   );
