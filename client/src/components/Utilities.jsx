@@ -15,9 +15,9 @@ export default function Utilities(props) {
   useEffect(() => {
     if (props.data) {
       setUtilities({
-        gas: props.data.gas || "",
-        electricity: props.data.electricity || "",
-        water: props.data.water || "",
+        gas: parseFloat(props.data.gas).toFixed(2) || "",
+        electricity: parseFloat(props.data.electricity).toFixed(2) || "",
+        water: parseFloat(props.data.water).toFixed(2) || "",
       });
     }
   }, [props.data]);
@@ -40,26 +40,28 @@ export default function Utilities(props) {
   function updateAmount(event) {
     const { name, value } = event.target;
 
-    if (isNaN(value)) {
+    const valueToNumber = parseFloat(value);
+
+    if (isNaN(valueToNumber)) {
       setError("Please enter a number");
       return;
     }
 
-    const roundedValue = Math.round(value * 100) / 100;
-
     setUtilities((prevItems) => {
       const updatedAmount = {
         ...prevItems,
-        [name]: value == "" ? "" : parseFloat(roundedValue),
+        [name]: value == "" ? "" : value,
       };
       setError(null);
       return updatedAmount;
     });
   }
 
-  const total = utilities.gas + utilities.electricity + utilities.water;
-  let totalRounded = Math.round(total * 100) / 100;
-  totalRounded = totalRounded.toFixed(2);
+  let total =
+    parseFloat(utilities.gas) +
+    parseFloat(utilities.electricity) +
+    parseFloat(utilities.water);
+  total = total.toFixed(2);
 
   return (
     <div>
@@ -82,7 +84,7 @@ export default function Utilities(props) {
           onChange={updateAmount}
           value={utilities.water}
         ></Input>
-        <Total total={totalRounded} />
+        <Total total={total} />
       </Card>
     </div>
   );
