@@ -15,9 +15,9 @@ export default function ServicesAndSubscriptions(props) {
   useEffect(() => {
     if (props.data) {
       setServicesAndSubscriptions({
-        phone: props.data.phone || "",
-        broadband: props.data.broadband || "",
-        subscriptions: props.data.subscriptions || "",
+        phone: parseFloat(props.data.phone).toFixed(2) || "",
+        broadband: parseFloat(props.data.broadband).toFixed(2) || "",
+        subscriptions: parseFloat(props.data.subscriptions).toFixed(2) || "",
       });
     }
   }, [props.data]);
@@ -40,29 +40,28 @@ export default function ServicesAndSubscriptions(props) {
   function updateAmount(event) {
     const { name, value } = event.target;
 
-    if (isNaN(value)) {
+    const valueToNumber = parseFloat(value);
+
+    if (isNaN(valueToNumber)) {
       setError("Please enter a number");
       return;
     }
 
-    const roundedValue = Math.round(value * 100) / 100;
-
     setServicesAndSubscriptions((prevItems) => {
       const updatedAmount = {
         ...prevItems,
-        [name]: value == "" ? "" : parseFloat(roundedValue),
+        [name]: value == "" ? "" : value,
       };
       setError(null);
       return updatedAmount;
     });
   }
 
-  const total =
-    servicesAndSubscriptions.phone +
-    servicesAndSubscriptions.broadband +
-    servicesAndSubscriptions.subscriptions;
-  let totalRounded = Math.round(total * 100) / 100;
-  totalRounded = totalRounded.toFixed(2);
+  let total =
+    parseFloat(servicesAndSubscriptions.phone) +
+    parseFloat(servicesAndSubscriptions.broadband) +
+    parseFloat(servicesAndSubscriptions.subscriptions);
+  total = total.toFixed(2);
 
   return (
     <div>
@@ -85,7 +84,7 @@ export default function ServicesAndSubscriptions(props) {
           onChange={updateAmount}
           value={servicesAndSubscriptions.subscriptions}
         ></Input>
-        <Total total={totalRounded} />
+        <Total total={total} />
       </Card>
     </div>
   );
