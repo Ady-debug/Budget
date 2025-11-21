@@ -14,8 +14,9 @@ export default function Personal(props) {
   useEffect(() => {
     if (props.data) {
       setPersonal({
-        clothingAndFootwear: props.data.clothingAndFootwear || "",
-        hairdressing: props.data.hairdressing || "",
+        clothingAndFootwear:
+          parseFloat(props.data.clothingAndFootwear).toFixed(2) || "",
+        hairdressing: parseFloat(props.data.hairdressing).toFixed(2) || "",
       });
     }
   }, [props.data]);
@@ -38,26 +39,27 @@ export default function Personal(props) {
   function updateAmount(event) {
     const { name, value } = event.target;
 
-    if (isNaN(value)) {
+    const valueToNumber = parseFloat(value);
+
+    if (isNaN(valueToNumber)) {
       setError("Please enter a number");
       return;
     }
 
-    const roundedValue = Math.round(value * 100) / 100;
-
     setPersonal((prevItems) => {
       const updatedAmount = {
         ...prevItems,
-        [name]: value == "" ? "" : parseFloat(roundedValue),
+        [name]: value == "" ? "" : value,
       };
       setError(null);
       return updatedAmount;
     });
   }
 
-  const total = personal.clothingAndFootwear + personal.hairdressing;
-  let totalRounded = Math.round(total * 100) / 100;
-  totalRounded = totalRounded.toFixed(2);
+  let total =
+    parseFloat(personal.clothingAndFootwear) +
+    parseFloat(personal.hairdressing);
+  total = total.toFixed(2);
 
   return (
     <div>
@@ -74,7 +76,7 @@ export default function Personal(props) {
           onChange={updateAmount}
           value={personal.hairdressing}
         ></Input>
-        <Total total={totalRounded} />
+        <Total total={total} />
       </Card>
     </div>
   );
