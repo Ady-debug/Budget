@@ -14,8 +14,8 @@ export default function Pets(props) {
   useEffect(() => {
     if (props.data) {
       setPets({
-        petFood: props.data.petFood || "",
-        insurance: props.data.insurance || "",
+        petFood: parseFloat(props.data.petFood).toFixed(2) || "",
+        insurance: parseFloat(props.data.insurance).toFixed(2) || "",
       });
     }
   }, [props.data]);
@@ -38,26 +38,25 @@ export default function Pets(props) {
   function updateAmount(event) {
     const { name, value } = event.target;
 
-    if (isNaN(value)) {
+    const valueToNumber = parseFloat(value);
+
+    if (isNaN(valueToNumber)) {
       setError("Please enter a number");
       return;
     }
 
-    const roundedValue = Math.round(value * 100) / 100;
-
     setPets((prevItems) => {
       const updatedAmount = {
         ...prevItems,
-        [name]: value == "" ? "" : parseFloat(roundedValue),
+        [name]: value == "" ? "" : value,
       };
       setError(null);
       return updatedAmount;
     });
   }
 
-  const total = pets.petFood + pets.insurance;
-  let totalRounded = Math.round(total * 100) / 100;
-  totalRounded = totalRounded.toFixed(2);
+  let total = parseFloat(pets.petFood) + parseFloat(pets.insurance);
+  total = total.toFixed(2);
 
   return (
     <div>
@@ -74,7 +73,7 @@ export default function Pets(props) {
           onChange={updateAmount}
           value={pets.insurance}
         ></Input>
-        <Total total={totalRounded} />
+        <Total total={total} />
       </Card>
     </div>
   );
