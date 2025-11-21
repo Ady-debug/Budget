@@ -15,9 +15,9 @@ export default function HomeExpense(props) {
   useEffect(() => {
     if (props.data) {
       setHomeExpense({
-        mortgage: props.data.mortgage || "",
-        councilTax: props.data.councilTax || "",
-        homeInsurance: props.data.homeInsurance || "",
+        mortgage: parseFloat(props.data.mortgage).toFixed(2) || "",
+        councilTax: parseFloat(props.data.councilTax).toFixed(2) || "",
+        homeInsurance: parseFloat(props.data.homeInsurance).toFixed(2) || "",
       });
     }
   }, [props.data]);
@@ -40,27 +40,28 @@ export default function HomeExpense(props) {
   function updateAmount(event) {
     const { name, value } = event.target;
 
-    if (isNaN(value)) {
+    const valueToNumber = parseFloat(value);
+
+    if (isNaN(valueToNumber)) {
       setError("Please enter a number");
       return;
     }
 
-    const roundedValue = Math.round(value * 100) / 100;
-
     setHomeExpense((prevItems) => {
       const updatedAmount = {
         ...prevItems,
-        [name]: value == "" ? "" : parseFloat(roundedValue),
+        [name]: value == "" ? "" : value,
       };
       setError(null);
       return updatedAmount;
     });
   }
 
-  const total =
-    homeExpense.mortgage + homeExpense.councilTax + homeExpense.homeInsurance;
-  let totalRounded = Math.round(total * 100) / 100;
-  totalRounded = totalRounded.toFixed(2);
+  let total =
+    parseFloat(homeExpense.mortgage) +
+    parseFloat(homeExpense.councilTax) +
+    parseFloat(homeExpense.homeInsurance);
+  total = total.toFixed(2);
 
   return (
     <div>
@@ -83,7 +84,7 @@ export default function HomeExpense(props) {
           onChange={updateAmount}
           value={homeExpense.homeInsurance}
         ></Input>
-        <Total total={totalRounded} />
+        <Total total={total} />
       </Card>
     </div>
   );
