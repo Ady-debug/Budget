@@ -14,8 +14,8 @@ export default function AccountsAndSavings(props) {
   useEffect(() => {
     if (props.data) {
       setAccountsAndSavings({
-        accountFees: props.data.accountFees || "",
-        savings: props.data.savings || "",
+        accountFees: parseFloat(props.data.accountFees).toFixed(2) || "",
+        savings: parseFloat(props.data.savings).toFixed(2) || "",
       });
     }
   }, [props.data]);
@@ -38,26 +38,27 @@ export default function AccountsAndSavings(props) {
   function updateAmount(event) {
     const { name, value } = event.target;
 
-    if (isNaN(value)) {
+    const valueToNumber = parseFloat(value);
+
+    if (isNaN(valueToNumber)) {
       setError("Please enter a number");
       return;
     }
 
-    const roundedValue = Math.round(value * 100) / 100;
-
     setAccountsAndSavings((prevItems) => {
       const updatedAmount = {
         ...prevItems,
-        [name]: value == "" ? "" : parseFloat(roundedValue),
+        [name]: value == "" ? "" : value,
       };
       setError(null);
       return updatedAmount;
     });
   }
 
-  const total = accountsAndSavings.accountFees + accountsAndSavings.savings;
-  let totalRounded = Math.round(total * 100) / 100;
-  totalRounded = totalRounded.toFixed(2);
+  let total =
+    parseFloat(accountsAndSavings.accountFees) +
+    parseFloat(accountsAndSavings.savings);
+  total = total.toFixed(2);
 
   return (
     <div>
@@ -74,7 +75,7 @@ export default function AccountsAndSavings(props) {
           onChange={updateAmount}
           value={accountsAndSavings.savings}
         ></Input>
-        <Total total={totalRounded} />
+        <Total total={total} />
       </Card>
     </div>
   );
