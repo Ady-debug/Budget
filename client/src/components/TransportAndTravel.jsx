@@ -18,12 +18,13 @@ export default function TransportAndTravel(props) {
   useEffect(() => {
     if (props.data) {
       setTransportAndTravel({
-        vehicleInsurance: props.data.vehicleInsurance || "",
-        roadTax: props.data.roadTax || "",
-        fuel: props.data.fuel || "",
-        breakdownCover: props.data.breakdownCover || "",
-        MOTAndServices: props.data.MOTAndServices || "",
-        railAndBus: props.data.railAndBus || "",
+        vehicleInsurance:
+          parseFloat(props.data.vehicleInsurance).toFixed(2) || "",
+        roadTax: parseFloat(props.data.roadTax).toFixed(2) || "",
+        fuel: parseFloat(props.data.fuel).toFixed(2) || "",
+        breakdownCover: parseFloat(props.data.breakdownCover).toFixed(2) || "",
+        MOTAndServices: parseFloat(props.data.MOTAndServices).toFixed(2) || "",
+        railAndBus: parseFloat(props.data.railAndBus).toFixed(2) || "",
       });
     }
   }, [props.data]);
@@ -46,32 +47,31 @@ export default function TransportAndTravel(props) {
   function updateAmount(event) {
     const { name, value } = event.target;
 
-    if (isNaN(value)) {
+    const valueToNumber = parseFloat(value);
+
+    if (isNaN(valueToNumber)) {
       setError("Please enter a number");
       return;
     }
 
-    const roundedValue = Math.round(value * 100) / 100;
-
     setTransportAndTravel((prevItems) => {
       const updatedAmount = {
         ...prevItems,
-        [name]: value == "" ? "" : parseFloat(roundedValue),
+        [name]: value == "" ? "" : value,
       };
       setError(null);
       return updatedAmount;
     });
   }
 
-  const total =
-    transportAndTravel.vehicleInsurance +
-    transportAndTravel.roadTax +
-    transportAndTravel.fuel +
-    transportAndTravel.breakdownCover +
-    transportAndTravel.MOTAndServices +
-    transportAndTravel.railAndBus;
-  let totalRounded = Math.round(total * 100) / 100;
-  totalRounded = totalRounded.toFixed(2);
+  let total =
+    parseFloat(transportAndTravel.vehicleInsurance) +
+    parseFloat(transportAndTravel.roadTax) +
+    parseFloat(transportAndTravel.fuel) +
+    parseFloat(transportAndTravel.breakdownCover) +
+    parseFloat(transportAndTravel.MOTAndServices) +
+    parseFloat(transportAndTravel.railAndBus);
+  total = total.toFixed(2);
 
   return (
     <div>
@@ -112,7 +112,7 @@ export default function TransportAndTravel(props) {
           onChange={updateAmount}
           value={transportAndTravel.railAndBus}
         ></Input>
-        <Total total={totalRounded} />
+        <Total total={total} />
       </Card>
     </div>
   );
