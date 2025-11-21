@@ -14,8 +14,9 @@ export default function FoodAndShopping(props) {
   useEffect(() => {
     if (props.data) {
       setFoodAndShopping({
-        supermarketShopping: props.data.supermarketShopping || "",
-        mealsOut: props.data.mealsOut || "",
+        supermarketShopping:
+          parseFloat(props.data.supermarketShopping).toFixed(2) || "",
+        mealsOut: parseFloat(props.data.mealsOut).toFixed(2) || "",
       });
     }
   }, [props.data]);
@@ -38,26 +39,27 @@ export default function FoodAndShopping(props) {
   function updateAmount(event) {
     const { name, value } = event.target;
 
-    if (isNaN(value)) {
+    const valueToNumber = parseFloat(value);
+
+    if (isNaN(valueToNumber)) {
       setError("Please enter a number");
       return;
     }
 
-    const roundedValue = Math.round(value * 100) / 100;
-
     setFoodAndShopping((prevItems) => {
       const updatedAmount = {
         ...prevItems,
-        [name]: value == "" ? "" : parseFloat(roundedValue),
+        [name]: value == "" ? "" : value,
       };
       setError(null);
       return updatedAmount;
     });
   }
 
-  const total = foodAndShopping.supermarketShopping + foodAndShopping.mealsOut;
-  let totalRounded = Math.round(total * 100) / 100;
-  totalRounded = totalRounded.toFixed(2);
+  let total =
+    parseFloat(foodAndShopping.supermarketShopping) +
+    parseFloat(foodAndShopping.mealsOut);
+  total = total.toFixed(2);
 
   return (
     <div>
@@ -74,7 +76,7 @@ export default function FoodAndShopping(props) {
           onChange={updateAmount}
           value={foodAndShopping.mealsOut}
         ></Input>
-        <Total total={totalRounded} />
+        <Total total={total} />
       </Card>
     </div>
   );
