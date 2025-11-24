@@ -6,7 +6,7 @@ export default function Input(props) {
       <span className="w-40">{props.title}:</span>
       <div className="before:content-['£']">
         <input
-          className="w-17 border rounded-lg border-transparent group-hover:border-indigo-500 transition-colors duration-100"
+          className="w-18 border rounded-lg border-transparent group-hover:border-indigo-500 transition-colors duration-100"
           name={props.name}
           type="text"
           placeholder=" per month"

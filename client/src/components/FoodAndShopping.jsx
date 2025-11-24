@@ -40,8 +40,7 @@ export default function FoodAndShopping(props) {
     const { name, value } = event.target;
 
     const valueToNumber = parseFloat(value);
-
-    if (isNaN(valueToNumber)) {
+    if (value !== "" && isNaN(valueToNumber)) {
       setError("Please enter a number");
       return;
     }
