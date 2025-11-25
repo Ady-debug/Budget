@@ -7,7 +7,7 @@ export default function Card(props) {
         {props.title}
       </h2>
       {props.error && (
-        <p className="font-bold text-red-400">{props.error.message}</p>
+        <p className="font-bold text-xs text-red-400">{props.error.message}</p>
       )}
       {props.children}
     </form>

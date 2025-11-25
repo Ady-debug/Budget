@@ -12,6 +12,9 @@ function validateField(value, fieldName) {
   if (value > 99999999.99) {
     throw new Error("Please enter an accurate amount, the figure is too high");
   }
+  if (value === "") {
+    throw new Error(`Please enter a number for ${fieldName}`);
+  }
 }
 
 export async function getBudgetData() {
@@ -30,7 +33,7 @@ export async function updateIncome(income) {
   }
 
   validateField(income.wage, "Wage");
-  validateField(income.otherIncome, "Other income");
+  validateField(income.otherIncome, "Other Income");
 
   try {
     const response = await axios.post(`${SERVER_URL}/api/income`, {
