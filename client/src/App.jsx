@@ -12,6 +12,7 @@ import Personal from "./components/Personal";
 import Pets from "./components/Pets";
 import FoodAndShopping from "./components/FoodAndShopping";
 import AccountsAndSavings from "./components/AccountsAndSavings";
+import Summary from "./components/Summary";
 
 function App() {
   const [budgetData, setBudgetData] = useState({
@@ -79,6 +80,7 @@ function App() {
         <Pets data={budgetData.pets} />
         <FoodAndShopping data={budgetData.foodAndShopping} />
         <AccountsAndSavings data={budgetData.accountsAndSavings} />
+        <Summary data={budgetData} />
       </div>
       <Footer />
     </div>
@@ -86,10 +88,3 @@ function App() {
 }
 
 export default App;
-
-//TODO: see list...
-// Update state to echo data structure from server - DONE
-// Create endpoints to pull back information from the database for each category
-// Update API layer to interface with server
-// Create cards for each category
-// See US#42 for categories
