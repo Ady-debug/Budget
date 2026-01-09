@@ -26,6 +26,14 @@ export default function Income(props) {
         try {
           await updateIncome(income);
           setError(null);
+          if (props.onUpdate) {
+            //Updates data in app.jsx for use in other components
+            props.onUpdate({
+              wage: income.wage === "" ? "" : parseFloat(income.wage),
+              otherIncome:
+                income.otherIncome === "" ? "" : parseFloat(income.otherIncome),
+            });
+          }
         } catch (error) {
           setError(error);
         }
@@ -33,7 +41,7 @@ export default function Income(props) {
       sendUpdatedIncome(income);
     }, 2000);
     return () => clearTimeout(updateData);
-  }, [income]);
+  }, [income, props]);
 
   function updateAmount(event) {
     const { name, value } = event.target;

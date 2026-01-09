@@ -71,7 +71,12 @@ function App() {
         <p className="font-bold text-red-400 flex justify-center">{error}</p>
       )}
       <div className="flex-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 max-w-6xl mx-auto">
-        <Income data={budgetData.income} />
+        <Income
+          data={budgetData.income}
+          onUpdate={(incomeObj) =>
+            setBudgetData((prev) => ({ ...prev, income: incomeObj }))
+          }
+        />
         <HomeExpense data={budgetData.homeExpense} />
         <Utilities data={budgetData.utilities} />
         <ServicesAndSubscriptions data={budgetData.servicesAndSubscriptions} />

@@ -3,7 +3,6 @@ import Card from "./card";
 
 export default function Summary(props) {
   const data = props.data;
-
   const [totalIncome, setTotalIncome] = useState(0);
   const [totalExpenses, setTotalExpenses] = useState(0);
 
@@ -29,8 +28,7 @@ export default function Summary(props) {
 
   useEffect(() => {
     updateTotals(data);
-  }),
-    [data];
+  }, [data]);
 
   // FIXME: Use effect not working as expected to update the totals dynamically so also needs investigating.
 
