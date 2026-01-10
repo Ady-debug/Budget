@@ -5,6 +5,7 @@ import Input from "./Input";
 import Total from "./Total";
 
 export default function Income(props) {
+  const { data, onUpdate } = props;
   const [income, setIncome] = useState({
     wage: "",
     otherIncome: "",
@@ -12,13 +13,13 @@ export default function Income(props) {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (props.data) {
+    if (data) {
       setIncome({
-        wage: parseFloat(props.data.wage).toFixed(2),
-        otherIncome: parseFloat(props.data.otherIncome).toFixed(2),
+        wage: parseFloat(data.wage).toFixed(2),
+        otherIncome: parseFloat(data.otherIncome).toFixed(2),
       });
     }
-  }, [props.data]);
+  }, [data]);
 
   useEffect(() => {
     const updateData = setTimeout(() => {
@@ -26,9 +27,9 @@ export default function Income(props) {
         try {
           await updateIncome(income);
           setError(null);
-          if (props.onUpdate) {
+          if (onUpdate) {
             //Updates data in app.jsx for use in other components
-            props.onUpdate({
+            onUpdate({
               wage: income.wage === "" ? "" : parseFloat(income.wage),
               otherIncome:
                 income.otherIncome === "" ? "" : parseFloat(income.otherIncome),
@@ -39,9 +40,9 @@ export default function Income(props) {
         }
       }
       sendUpdatedIncome(income);
-    }, 2000);
+    }, 1000);
     return () => clearTimeout(updateData);
-  }, [income, props]);
+  }, [income, onUpdate]);
 
   function updateAmount(event) {
     const { name, value } = event.target;
