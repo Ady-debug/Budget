@@ -5,6 +5,7 @@ import Input from "./Input";
 import Total from "./Total";
 
 export default function HomeExpense(props) {
+  const { data, onUpdate } = props;
   const [homeExpense, setHomeExpense] = useState({
     mortgage: "",
     councilTax: "",
@@ -13,14 +14,14 @@ export default function HomeExpense(props) {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (props.data) {
+    if (data) {
       setHomeExpense({
-        mortgage: parseFloat(props.data.mortgage).toFixed(2) || "",
-        councilTax: parseFloat(props.data.councilTax).toFixed(2) || "",
-        homeInsurance: parseFloat(props.data.homeInsurance).toFixed(2) || "",
+        mortgage: parseFloat(data.mortgage).toFixed(2) || "",
+        councilTax: parseFloat(data.councilTax).toFixed(2) || "",
+        homeInsurance: parseFloat(data.homeInsurance).toFixed(2) || "",
       });
     }
-  }, [props.data]);
+  }, [data]);
 
   useEffect(() => {
     const updateData = setTimeout(() => {
@@ -28,14 +29,31 @@ export default function HomeExpense(props) {
         try {
           await updateHomeExpense(homeExpense);
           setError(null);
+          if (onUpdate) {
+            //Updates data in app.jsx for use in other components
+            onUpdate({
+              mortgage:
+                homeExpense.mortgage === ""
+                  ? ""
+                  : parseFloat(homeExpense.mortgage),
+              councilTax:
+                homeExpense.councilTax === ""
+                  ? ""
+                  : parseFloat(homeExpense.councilTax),
+              homeInsurance:
+                homeExpense.homeInsurance === ""
+                  ? ""
+                  : parseFloat(homeExpense.homeInsurance),
+            });
+          }
         } catch (error) {
           setError(error);
         }
       }
       sendHomeExpense(homeExpense);
-    }, 2000);
+    }, 1000);
     return () => clearTimeout(updateData);
-  }, [homeExpense]);
+  }, [homeExpense, onUpdate]);
 
   function updateAmount(event) {
     const { name, value } = event.target;

@@ -30,8 +30,6 @@ export default function Summary(props) {
     updateTotals(data);
   }, [data]);
 
-  // FIXME: Use effect not working as expected to update the totals dynamically so also needs investigating.
-
   return (
     <div>
       <Card title="Summary" error={null}>
