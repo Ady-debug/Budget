@@ -5,6 +5,7 @@ import Input from "./Input";
 import Total from "./Total";
 
 export default function AccountsAndSavings(props) {
+  const { data, onUpdate } = props;
   const [accountsAndSavings, setAccountsAndSavings] = useState({
     accountFees: "",
     savings: "",
@@ -12,13 +13,13 @@ export default function AccountsAndSavings(props) {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (props.data) {
+    if (data) {
       setAccountsAndSavings({
-        accountFees: parseFloat(props.data.accountFees).toFixed(2) || "",
-        savings: parseFloat(props.data.savings).toFixed(2) || "",
+        accountFees: parseFloat(data.accountFees).toFixed(2) || "",
+        savings: parseFloat(data.savings).toFixed(2) || "",
       });
     }
-  }, [props.data]);
+  }, [data]);
 
   useEffect(() => {
     const updateData = setTimeout(() => {
@@ -26,14 +27,27 @@ export default function AccountsAndSavings(props) {
         try {
           await updateAccountsAndSavings(accountsAndSavings);
           setError(null);
+          if (onUpdate) {
+            //Updates data in app.jsx for use in other components
+            onUpdate({
+              accountFees:
+                accountsAndSavings.accountFees === ""
+                  ? ""
+                  : parseFloat(accountsAndSavings.accountFees),
+              savings:
+                accountsAndSavings.savings === ""
+                  ? ""
+                  : parseFloat(accountsAndSavings.savings),
+            });
+          }
         } catch (error) {
           setError(error);
         }
       }
       sendAccountsAndSavings(accountsAndSavings);
-    }, 2000);
+    }, 1000);
     return () => clearTimeout(updateData);
-  }, [accountsAndSavings]);
+  }, [accountsAndSavings, onUpdate]);
 
   function updateAmount(event) {
     const { name, value } = event.target;

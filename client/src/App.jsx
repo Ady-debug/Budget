@@ -134,7 +134,15 @@ function App() {
             }))
           }
         />
-        <AccountsAndSavings data={budgetData.accountsAndSavings} />
+        <AccountsAndSavings
+          data={budgetData.accountsAndSavings}
+          onUpdate={(accountsAndSavingsObj) =>
+            setBudgetData((prev) => ({
+              ...prev,
+              accountsAndSavings: accountsAndSavingsObj,
+            }))
+          }
+        />
         <Summary data={budgetData} />
       </div>
       <Footer />
