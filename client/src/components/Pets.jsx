@@ -5,6 +5,7 @@ import Input from "./Input";
 import Total from "./Total";
 
 export default function Pets(props) {
+  const { data, onUpdate } = props;
   const [pets, setPets] = useState({
     petFood: "",
     insurance: "",
@@ -12,13 +13,13 @@ export default function Pets(props) {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (props.data) {
+    if (data) {
       setPets({
-        petFood: parseFloat(props.data.petFood).toFixed(2) || "",
-        insurance: parseFloat(props.data.insurance).toFixed(2) || "",
+        petFood: parseFloat(data.petFood).toFixed(2) || "",
+        insurance: parseFloat(data.insurance).toFixed(2) || "",
       });
     }
-  }, [props.data]);
+  }, [data]);
 
   useEffect(() => {
     const updateData = setTimeout(() => {
@@ -26,14 +27,22 @@ export default function Pets(props) {
         try {
           await updatePets(pets);
           setError(null);
+          if (onUpdate) {
+            //Updates data in app.jsx for use in other components
+            onUpdate({
+              petFood: pets.petFood === "" ? "" : parseFloat(pets.petFood),
+              insurance:
+                pets.insurance === "" ? "" : parseFloat(pets.insurance),
+            });
+          }
         } catch (error) {
           setError(error);
         }
       }
       sendPets(pets);
-    }, 2000);
+    }, 1000);
     return () => clearTimeout(updateData);
-  }, [pets]);
+  }, [pets, onUpdate]);
 
   function updateAmount(event) {
     const { name, value } = event.target;

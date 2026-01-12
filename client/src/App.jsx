@@ -116,7 +116,15 @@ function App() {
             }))
           }
         />
-        <Pets data={budgetData.pets} />
+        <Pets
+          data={budgetData.pets}
+          onUpdate={(petsObj) =>
+            setBudgetData((prev) => ({
+              ...prev,
+              pets: petsObj,
+            }))
+          }
+        />
         <FoodAndShopping data={budgetData.foodAndShopping} />
         <AccountsAndSavings data={budgetData.accountsAndSavings} />
         <Summary data={budgetData} />
