@@ -5,6 +5,7 @@ import Input from "./Input";
 import Total from "./Total";
 
 export default function Personal(props) {
+  const { data, onUpdate } = props;
   const [personal, setPersonal] = useState({
     clothingAndFootwear: "",
     hairdressing: "",
@@ -12,14 +13,14 @@ export default function Personal(props) {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (props.data) {
+    if (data) {
       setPersonal({
         clothingAndFootwear:
-          parseFloat(props.data.clothingAndFootwear).toFixed(2) || "",
-        hairdressing: parseFloat(props.data.hairdressing).toFixed(2) || "",
+          parseFloat(data.clothingAndFootwear).toFixed(2) || "",
+        hairdressing: parseFloat(data.hairdressing).toFixed(2) || "",
       });
     }
-  }, [props.data]);
+  }, [data]);
 
   useEffect(() => {
     const updateData = setTimeout(() => {
@@ -27,14 +28,27 @@ export default function Personal(props) {
         try {
           await updatePersonal(personal);
           setError(null);
+          if (onUpdate) {
+            //Updates data in app.jsx for use in other components
+            onUpdate({
+              clothingAndFootwear:
+                personal.clothingAndFootwear === ""
+                  ? ""
+                  : parseFloat(personal.clothingAndFootwear),
+              hairdressing:
+                personal.hairdressing === ""
+                  ? ""
+                  : parseFloat(personal.hairdressing),
+            });
+          }
         } catch (error) {
           setError(error);
         }
       }
       sendPersonal(personal);
-    }, 2000);
+    }, 1000);
     return () => clearTimeout(updateData);
-  }, [personal]);
+  }, [personal, onUpdate]);
 
   function updateAmount(event) {
     const { name, value } = event.target;

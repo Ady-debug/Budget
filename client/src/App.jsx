@@ -107,7 +107,15 @@ function App() {
             }))
           }
         />
-        <Personal data={budgetData.personal} />
+        <Personal
+          data={budgetData.personal}
+          onUpdate={(personalObj) =>
+            setBudgetData((prev) => ({
+              ...prev,
+              personal: personalObj,
+            }))
+          }
+        />
         <Pets data={budgetData.pets} />
         <FoodAndShopping data={budgetData.foodAndShopping} />
         <AccountsAndSavings data={budgetData.accountsAndSavings} />
