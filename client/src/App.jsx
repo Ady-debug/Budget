@@ -89,7 +89,15 @@ function App() {
             setBudgetData((prev) => ({ ...prev, utilities: utilitiesObj }))
           }
         />
-        <ServicesAndSubscriptions data={budgetData.servicesAndSubscriptions} />
+        <ServicesAndSubscriptions
+          data={budgetData.servicesAndSubscriptions}
+          onUpdate={(servicesAndSubscriptionsObj) =>
+            setBudgetData((prev) => ({
+              ...prev,
+              servicesAndSubscriptions: servicesAndSubscriptionsObj,
+            }))
+          }
+        />
         <TransportAndTravel data={budgetData.transportAndTravel} />
         <Personal data={budgetData.personal} />
         <Pets data={budgetData.pets} />

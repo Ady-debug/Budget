@@ -5,6 +5,7 @@ import Input from "./Input";
 import Total from "./Total";
 
 export default function ServicesAndSubscriptions(props) {
+  const { data, onUpdate } = props;
   const [servicesAndSubscriptions, setServicesAndSubscriptions] = useState({
     phone: "",
     broadband: "",
@@ -13,14 +14,14 @@ export default function ServicesAndSubscriptions(props) {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (props.data) {
+    if (data) {
       setServicesAndSubscriptions({
-        phone: parseFloat(props.data.phone).toFixed(2) || "",
-        broadband: parseFloat(props.data.broadband).toFixed(2) || "",
-        subscriptions: parseFloat(props.data.subscriptions).toFixed(2) || "",
+        phone: parseFloat(data.phone).toFixed(2) || "",
+        broadband: parseFloat(data.broadband).toFixed(2) || "",
+        subscriptions: parseFloat(data.subscriptions).toFixed(2) || "",
       });
     }
-  }, [props.data]);
+  }, [data]);
 
   useEffect(() => {
     const updateData = setTimeout(() => {
@@ -28,14 +29,31 @@ export default function ServicesAndSubscriptions(props) {
         try {
           await updateServicesAndSubscriptions(servicesAndSubscriptions);
           setError(null);
+          if (onUpdate) {
+            //Updates data in app.jsx for use in other components
+            onUpdate({
+              phone:
+                servicesAndSubscriptions.phone === ""
+                  ? ""
+                  : parseFloat(servicesAndSubscriptions.phone),
+              broadband:
+                servicesAndSubscriptions.broadband === ""
+                  ? ""
+                  : parseFloat(servicesAndSubscriptions.broadband),
+              subscriptions:
+                servicesAndSubscriptions.subscriptions === ""
+                  ? ""
+                  : parseFloat(servicesAndSubscriptions.subscriptions),
+            });
+          }
         } catch (error) {
           setError(error);
         }
       }
       sendServicesAndSubscriptions(servicesAndSubscriptions);
-    }, 2000);
+    }, 1000);
     return () => clearTimeout(updateData);
-  }, [servicesAndSubscriptions]);
+  }, [servicesAndSubscriptions, onUpdate]);
 
   function updateAmount(event) {
     const { name, value } = event.target;
