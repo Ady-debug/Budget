@@ -125,7 +125,15 @@ function App() {
             }))
           }
         />
-        <FoodAndShopping data={budgetData.foodAndShopping} />
+        <FoodAndShopping
+          data={budgetData.foodAndShopping}
+          onUpdate={(foodAndShoppingObj) =>
+            setBudgetData((prev) => ({
+              ...prev,
+              foodAndShopping: foodAndShoppingObj,
+            }))
+          }
+        />
         <AccountsAndSavings data={budgetData.accountsAndSavings} />
         <Summary data={budgetData} />
       </div>

@@ -5,6 +5,7 @@ import Input from "./Input";
 import Total from "./Total";
 
 export default function FoodAndShopping(props) {
+  const { data, onUpdate } = props;
   const [foodAndShopping, setFoodAndShopping] = useState({
     supermarketShopping: "",
     mealsOut: "",
@@ -12,14 +13,14 @@ export default function FoodAndShopping(props) {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (props.data) {
+    if (data) {
       setFoodAndShopping({
         supermarketShopping:
-          parseFloat(props.data.supermarketShopping).toFixed(2) || "",
-        mealsOut: parseFloat(props.data.mealsOut).toFixed(2) || "",
+          parseFloat(data.supermarketShopping).toFixed(2) || "",
+        mealsOut: parseFloat(data.mealsOut).toFixed(2) || "",
       });
     }
-  }, [props.data]);
+  }, [data]);
 
   useEffect(() => {
     const updateData = setTimeout(() => {
@@ -27,14 +28,27 @@ export default function FoodAndShopping(props) {
         try {
           await updateFoodAndShopping(foodAndShopping);
           setError(null);
+          if (onUpdate) {
+            //Updates data in app.jsx for use in other components
+            onUpdate({
+              supermarketShopping:
+                foodAndShopping.supermarketShopping === ""
+                  ? ""
+                  : parseFloat(foodAndShopping.supermarketShopping),
+              mealsOut:
+                foodAndShopping.mealsOut === ""
+                  ? ""
+                  : parseFloat(foodAndShopping.mealsOut),
+            });
+          }
         } catch (error) {
           setError(error);
         }
       }
       sendFoodAndShopping(foodAndShopping);
-    }, 2000);
+    }, 1000);
     return () => clearTimeout(updateData);
-  }, [foodAndShopping]);
+  }, [foodAndShopping, onUpdate]);
 
   function updateAmount(event) {
     const { name, value } = event.target;
