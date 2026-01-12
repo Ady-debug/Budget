@@ -5,6 +5,7 @@ import Input from "./Input";
 import Total from "./Total";
 
 export default function Utilities(props) {
+  const { data, onUpdate } = props;
   const [utilities, setUtilities] = useState({
     gas: "",
     electricity: "",
@@ -13,14 +14,14 @@ export default function Utilities(props) {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (props.data) {
+    if (data) {
       setUtilities({
-        gas: parseFloat(props.data.gas).toFixed(2) || "",
-        electricity: parseFloat(props.data.electricity).toFixed(2) || "",
-        water: parseFloat(props.data.water).toFixed(2) || "",
+        gas: parseFloat(data.gas).toFixed(2) || "",
+        electricity: parseFloat(data.electricity).toFixed(2) || "",
+        water: parseFloat(data.water).toFixed(2) || "",
       });
     }
-  }, [props.data]);
+  }, [data]);
 
   useEffect(() => {
     const updateData = setTimeout(() => {
@@ -28,14 +29,25 @@ export default function Utilities(props) {
         try {
           await updateUtilities(utilities);
           setError(null);
+          if (onUpdate) {
+            //Updates data in app.jsx for use in other components
+            onUpdate({
+              gas: utilities.gas === "" ? "" : parseFloat(utilities.gas),
+              electricity:
+                utilities.electricity === ""
+                  ? ""
+                  : parseFloat(utilities.electricity),
+              water: utilities.water === "" ? "" : parseFloat(utilities.water),
+            });
+          }
         } catch (error) {
           setError(error);
         }
       }
       sendUpdatedUtilities(utilities);
-    }, 2000);
+    }, 1000);
     return () => clearTimeout(updateData);
-  }, [utilities]);
+  }, [utilities, onUpdate]);
 
   function updateAmount(event) {
     const { name, value } = event.target;
