@@ -5,6 +5,7 @@ import Input from "./Input";
 import Total from "./Total";
 
 export default function TransportAndTravel(props) {
+  const { data, onUpdate } = props;
   const [transportAndTravel, setTransportAndTravel] = useState({
     vehicleInsurance: "",
     roadTax: "",
@@ -16,18 +17,17 @@ export default function TransportAndTravel(props) {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (props.data) {
+    if (data) {
       setTransportAndTravel({
-        vehicleInsurance:
-          parseFloat(props.data.vehicleInsurance).toFixed(2) || "",
-        roadTax: parseFloat(props.data.roadTax).toFixed(2) || "",
-        fuel: parseFloat(props.data.fuel).toFixed(2) || "",
-        breakdownCover: parseFloat(props.data.breakdownCover).toFixed(2) || "",
-        MOTAndServices: parseFloat(props.data.MOTAndServices).toFixed(2) || "",
-        railAndBus: parseFloat(props.data.railAndBus).toFixed(2) || "",
+        vehicleInsurance: parseFloat(data.vehicleInsurance).toFixed(2) || "",
+        roadTax: parseFloat(data.roadTax).toFixed(2) || "",
+        fuel: parseFloat(data.fuel).toFixed(2) || "",
+        breakdownCover: parseFloat(data.breakdownCover).toFixed(2) || "",
+        MOTAndServices: parseFloat(data.MOTAndServices).toFixed(2) || "",
+        railAndBus: parseFloat(data.railAndBus).toFixed(2) || "",
       });
     }
-  }, [props.data]);
+  }, [data]);
 
   useEffect(() => {
     const updateData = setTimeout(() => {
@@ -35,14 +35,43 @@ export default function TransportAndTravel(props) {
         try {
           await updateTransportAndTravel(transportAndTravel);
           setError(null);
+          if (onUpdate) {
+            //Updates data in app.jsx for use in other components
+            onUpdate({
+              vehicleInsurance:
+                transportAndTravel.vehicleInsurance === ""
+                  ? ""
+                  : parseFloat(transportAndTravel.vehicleInsurance),
+              roadTax:
+                transportAndTravel.roadTax === ""
+                  ? ""
+                  : parseFloat(transportAndTravel.roadTax),
+              fuel:
+                transportAndTravel.fuel === ""
+                  ? ""
+                  : parseFloat(transportAndTravel.fuel),
+              breakdownCover:
+                transportAndTravel.breakdownCover === ""
+                  ? ""
+                  : parseFloat(transportAndTravel.breakdownCover),
+              MOTAndServices:
+                transportAndTravel.MOTAndServices === ""
+                  ? ""
+                  : parseFloat(transportAndTravel.MOTAndServices),
+              railAndBus:
+                transportAndTravel.railAndBus === ""
+                  ? ""
+                  : parseFloat(transportAndTravel.railAndBus),
+            });
+          }
         } catch (error) {
           setError(error);
         }
       }
       sendTransportAndTravel(transportAndTravel);
-    }, 2000);
+    }, 1000);
     return () => clearTimeout(updateData);
-  }, [transportAndTravel]);
+  }, [transportAndTravel, onUpdate]);
 
   function updateAmount(event) {
     const { name, value } = event.target;

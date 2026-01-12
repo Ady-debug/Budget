@@ -98,7 +98,15 @@ function App() {
             }))
           }
         />
-        <TransportAndTravel data={budgetData.transportAndTravel} />
+        <TransportAndTravel
+          data={budgetData.transportAndTravel}
+          onUpdate={(transportAndTravelObj) =>
+            setBudgetData((prev) => ({
+              ...prev,
+              transportAndTravel: transportAndTravelObj,
+            }))
+          }
+        />
         <Personal data={budgetData.personal} />
         <Pets data={budgetData.pets} />
         <FoodAndShopping data={budgetData.foodAndShopping} />
