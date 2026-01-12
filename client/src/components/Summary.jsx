@@ -47,6 +47,12 @@ export default function Summary(props) {
           <span className="w-40">{surplus > 0 && "Surplus:"}</span>
           <span className="w-17">{surplus > 0 && `£${surplus}`}</span>
         </p>
+        <p className="font-normal text-xs text-gray-700 dark:text-gray-400 flex gap-5 mt-5">
+          <span className="w-40"></span>
+          <span className="w-17">
+            {surplus > 0 && `£${(surplus / 4.333).toFixed(2)} per week`}
+          </span>
+        </p>
       </Card>
     </div>
   );
