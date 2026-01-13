@@ -13,6 +13,7 @@ import Pets from "./components/Pets";
 import FoodAndShopping from "./components/FoodAndShopping";
 import AccountsAndSavings from "./components/AccountsAndSavings";
 import Summary from "./components/Summary";
+import BudgetChart from "./components/BudgetChart";
 
 function App() {
   const [budgetData, setBudgetData] = useState({
@@ -144,6 +145,7 @@ function App() {
           }
         />
         <Summary data={budgetData} />
+        <BudgetChart data={budgetData} />
       </div>
       <Footer />
     </div>
