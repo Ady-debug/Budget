@@ -1,15 +1,20 @@
 import React from "react";
 
 export default function Card(props) {
+  const { centered = false, title, error, children } = props;
+  const containerClass = centered ? "flex justify-center w-full" : "";
+
   return (
-    <form className="block p-6 m-4 bg-white/20 border border-white/30 rounded-lg shadow-sm dark:bg-white/10 dark:border-white/20 backdrop-blur-sm group hover:shadow-lg hover:shadow-blue-500/50 transition-shadow duration-300">
-      <h2 className="mb-4 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
-        {props.title}
-      </h2>
-      {props.error && (
-        <p className="font-bold text-xs text-red-400">{props.error.message}</p>
-      )}
-      {props.children}
-    </form>
+    <div className={containerClass}>
+      <form className="block p-6 m-4 bg-white/20 border border-white/30 rounded-lg shadow-sm dark:bg-white/10 dark:border-white/20 backdrop-blur-sm group hover:shadow-lg hover:shadow-blue-500/50 transition-shadow duration-300">
+        <h2 className="mb-4 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">
+          {title}
+        </h2>
+        {error && (
+          <p className="font-bold text-xs text-red-400">{error.message}</p>
+        )}
+        {children}
+      </form>
+    </div>
   );
 }
