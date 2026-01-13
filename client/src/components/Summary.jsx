@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Card from "./Card";
+import Card from "./card";
 
 export default function Summary(props) {
   const data = props.data;
@@ -31,8 +31,8 @@ export default function Summary(props) {
   }, [data]);
 
   return (
-    <div className="col-span-1 sm:col-span-2 lg:col-span-3">
-      <Card centered={true} title="Summary" error={null}>
+    <div className="col-span-1 sm:col-span-1 lg:col-span-1">
+      <Card centered={false} title="Summary" error={null}>
         <p className="font-normal text-gray-700 dark:text-gray-400 flex gap-5 mt-5">
           <span className="w-40">{totalIncome > 0 && "Total Income:"}</span>
           <span className="w-17">{totalIncome > 0 && `£${totalIncome}`}</span>
