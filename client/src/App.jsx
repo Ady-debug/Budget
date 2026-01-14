@@ -66,7 +66,7 @@ function App() {
   }, []);
 
   return (
-    <div className="flex flex-col bg-gradient-to-br from-blue-50 via-violet-200 to-teal-100 dark:from-slate-700 dark:via-indigo-900 dark:to-violet-900 min-h-screen">
+    <div className="flex flex-col min-h-screen">
       <Header />
       {error && (
         <p className="font-bold text-red-400 flex justify-center">{error}</p>
