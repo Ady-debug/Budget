@@ -32,7 +32,7 @@ export default function Summary(props) {
 
   return (
     <div className="col-span-1 sm:col-span-1 lg:col-span-1">
-      <Card centered={false} title="Summary" error={null}>
+      <Card title="Summary" error={null}>
         <p className="font-normal text-gray-700 dark:text-gray-400 flex gap-5 mt-5">
           <span className="w-40">{totalIncome > 0 && "Total Income:"}</span>
           <span className="w-17">{totalIncome > 0 && `£${totalIncome}`}</span>

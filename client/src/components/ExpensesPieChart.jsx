@@ -95,7 +95,7 @@ export default function ExpensesPieChart(props) {
 
   return (
     <div className="col-span-1 sm:col-span-2 lg:col-span-2">
-      <Card centered={false} title="Breakdown" error={null}>
+      <Card title="Expenses Breakdown" error={null}>
         {chartData.length > 0 ? (
           <ResponsiveContainer width="100%" height={245}>
             <PieChart>
