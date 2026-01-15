@@ -15,10 +15,8 @@ export default function Income(props) {
   useEffect(() => {
     if (data) {
       setIncome({
-        wage: data.wage ? parseFloat(data.wage).toFixed(2) : "",
-        otherIncome: data.otherIncome
-          ? parseFloat(data.otherIncome).toFixed(2)
-          : "",
+        wage: parseFloat(data.wage).toFixed(2),
+        otherIncome: parseFloat(data.otherIncome).toFixed(2),
       });
     }
   }, [data]);
