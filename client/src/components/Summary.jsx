@@ -47,6 +47,12 @@ export default function Summary(props) {
           <span className="w-40">{surplus > 0 && "Surplus:"}</span>
           <span className="w-17">{surplus > 0 && `£${surplus}`}</span>
         </p>
+        {surplus < 0 && (
+          <p className="font-normal text-gray-700 dark:text-gray-400 mt-5">
+            You are in a deficit budget and need to reduce expenses, or increase
+            income, by £{Math.abs(surplus)} to make your budget balance
+          </p>
+        )}
         <p className="font-normal text-xs text-gray-700 dark:text-gray-400 flex gap-5 mt-5">
           <span className="w-40"></span>
           <span className="w-17">
