@@ -3,7 +3,7 @@
 -- Budget table 
 CREATE TABLE budget(
   id SERIAL PRIMARY KEY,
-  user_id INTEGER NOT NULL,
+  user_id UUID NOT NULL,
   category VARCHAR(50) NOT NULL,
   item VARCHAR(50) NOT NULL,
   amount DECIMAL (10,2) NOT NULL CHECK (amount >= 0),
@@ -31,7 +31,30 @@ EXECUTE FUNCTION auto_update_timestamp();
 -- Indexes for better query performance
 CREATE INDEX idx_budget_user_id ON budget(user_id);
 
+-- Enable Row Level Security
+ALTER TABLE budget ENABLE ROW LEVEL SECURITY;
+
+-- RLS Policies: Users can only access their own budget data
+CREATE POLICY "Users can view their own budget data"
+  ON budget
+  FOR SELECT
+  USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can insert their own budget data"
+  ON budget
+  FOR INSERT
+  WITH CHECK (auth.uid() = user_id);
+
+CREATE POLICY "Users can update their own budget data"
+  ON budget
+  FOR UPDATE
+  USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can delete their own budget data"
+  ON budget
+  FOR DELETE
+  USING (auth.uid() = user_id);
+
 -- TODO: Add foreign key constraints when full DB setup
 -- Consider additional indexing
--- Create RLS policy for viewing and INSERT/DELETE/UPDATE
 
