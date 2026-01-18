@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { getBudgetData } from "../api";
 import "./App.css";
 import Header from "./components/Header";

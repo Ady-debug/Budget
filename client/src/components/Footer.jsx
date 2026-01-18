@@ -1,9 +1,7 @@
-import React from "react";
-
 const date = new Date();
 const year = date.getFullYear();
 
-export default function () {
+export default function Footer() {
   return (
     <footer className="flex justify-center-safe">
       <div className="text-sm p-2 text-gray-900 dark:text-white">
@@ -12,5 +10,3 @@ export default function () {
     </footer>
   );
 }
-
-// TODO: Improve info on footer and review styling

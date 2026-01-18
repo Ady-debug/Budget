@@ -1,5 +1,3 @@
-import React from "react";
-
 export default function Input(props) {
   return (
     <label className="font-normal text-sm text-gray-700 dark:text-gray-400 flex gap-5 mb-1">

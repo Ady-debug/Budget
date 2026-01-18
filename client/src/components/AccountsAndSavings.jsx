@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { updateAccountsAndSavings } from "../../api";
 import Card from "./card";
 import Input from "./Input";

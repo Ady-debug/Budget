@@ -1,5 +1,3 @@
-import React from "react";
-
 export default function Header() {
   return (
     <header className="flex justify-between px-4 py-2">
