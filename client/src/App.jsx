@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { getBudgetData } from "../api";
+import { supabase } from "./supabaseClient";
 import "./App.css";
+import Auth from "./components/Auth";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import Income from "./components/Income";
@@ -16,6 +18,8 @@ import Summary from "./components/Summary";
 import ExpensesPieChart from "./components/ExpensesPieChart";
 
 function App() {
+  const [session, setSession] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [budgetData, setBudgetData] = useState({
     income: { wage: "", otherIncome: "" },
     homeExpense: { mortgage: "", councilTax: "", homeInsurance: "" },
@@ -37,6 +41,22 @@ function App() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setLoading(false);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    if (!session) return;
     async function getDataFromAPI() {
       function transformDataFromAPI(data) {
         const budget = data.budget;
@@ -63,11 +83,27 @@ function App() {
 
     getDataFromAPI();
     setError(null);
-  }, []);
+  }, [session]);
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <p className="text-xl">Loading...</p>
+      </div>
+    );
+  }
+
+  if (!session) {
+    return <Auth />;
+  }
 
   return (
     <div className="flex flex-col min-h-screen">
-      <Header />
+      <Header user={session.user} onSignOut={handleSignOut} />
       {error && (
         <p className="font-bold text-red-400 flex justify-center">{error}</p>
       )}
