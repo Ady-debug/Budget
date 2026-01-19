@@ -1,6 +1,17 @@
 import axios from "axios";
+import { supabase } from "./src/supabaseClient";
 
 const SERVER_URL = import.meta.env.VITE_SERVER_URL;
+
+async function getAuthHeaders() {
+  const {
+    data: { session },
+  } = await supabase.auth.getSession();
+
+  return {
+    Authorization: `Bearer ${session?.access_token}`,
+  };
+}
 
 function validateField(value, fieldName) {
   if (value < 0) {
@@ -19,7 +30,8 @@ function validateField(value, fieldName) {
 
 export async function getBudgetData() {
   try {
-    const response = await axios.get(`${SERVER_URL}/api/budget`);
+    const headers = await getAuthHeaders();
+    const response = await axios.get(`${SERVER_URL}/api/budget`, { headers });
     return response.data;
   } catch (error) {
     console.error(`Error getting budget information: ${error}`);
@@ -36,9 +48,12 @@ export async function updateIncome(income) {
   validateField(income.otherIncome, "Other Income");
 
   try {
-    const response = await axios.post(`${SERVER_URL}/api/income`, {
-      income,
-    });
+    const headers = await getAuthHeaders();
+    const response = await axios.post(
+      `${SERVER_URL}/api/income`,
+      { income },
+      { headers }
+    );
     return response.data;
   } catch (error) {
     console.error(`Error updating income: ${error.message}`);
@@ -56,9 +71,12 @@ export async function updateHomeExpense(homeExpense) {
   validateField(homeExpense.homeInsurance, "Home Insurance");
 
   try {
-    const response = await axios.post(`${SERVER_URL}/api/home_expense`, {
-      homeExpense,
-    });
+    const headers = await getAuthHeaders();
+    const response = await axios.post(
+      `${SERVER_URL}/api/home_expense`,
+      { homeExpense },
+      { headers }
+    );
     return response.data;
   } catch (error) {
     console.error(`Error updating home expenses: ${error.message}`);
@@ -76,9 +94,12 @@ export async function updateUtilities(utilities) {
   validateField(utilities.water, "Water");
 
   try {
-    const response = await axios.post(`${SERVER_URL}/api/utilities`, {
-      utilities,
-    });
+    const headers = await getAuthHeaders();
+    const response = await axios.post(
+      `${SERVER_URL}/api/utilities`,
+      { utilities },
+      { headers }
+    );
     return response.data;
   } catch (error) {
     console.error(`Error updating utilities: ${error.message}`);
@@ -99,11 +120,11 @@ export async function updateServicesAndSubscriptions(servicesAndSubscriptions) {
   validateField(servicesAndSubscriptions.subscriptions, "Subscriptions");
 
   try {
+    const headers = await getAuthHeaders();
     const response = await axios.post(
       `${SERVER_URL}/api/servicesandsubscriptions`,
-      {
-        servicesAndSubscriptions,
-      }
+      { servicesAndSubscriptions },
+      { headers }
     );
     return response.data;
   } catch (error) {
@@ -129,9 +150,12 @@ export async function updateTransportAndTravel(transportAndTravel) {
   validateField(transportAndTravel.railAndBus, "Rail and Bus");
 
   try {
-    const response = await axios.post(`${SERVER_URL}/api/transportandtravel`, {
-      transportAndTravel,
-    });
+    const headers = await getAuthHeaders();
+    const response = await axios.post(
+      `${SERVER_URL}/api/transportandtravel`,
+      { transportAndTravel },
+      { headers }
+    );
     return response.data;
   } catch (error) {
     console.error(`Error updating transport and travel: ${error.message}`);
@@ -150,9 +174,12 @@ export async function updatePersonal(personal) {
   validateField(personal.hairdressing, "Hairdressing");
 
   try {
-    const response = await axios.post(`${SERVER_URL}/api/personal`, {
-      personal,
-    });
+    const headers = await getAuthHeaders();
+    const response = await axios.post(
+      `${SERVER_URL}/api/personal`,
+      { personal },
+      { headers }
+    );
     return response.data;
   } catch (error) {
     console.error(`Error updating personal: ${error.message}`);
@@ -169,9 +196,12 @@ export async function updatePets(pets) {
   validateField(pets.insurance, "Insurance");
 
   try {
-    const response = await axios.post(`${SERVER_URL}/api/pets`, {
-      pets,
-    });
+    const headers = await getAuthHeaders();
+    const response = await axios.post(
+      `${SERVER_URL}/api/pets`,
+      { pets },
+      { headers }
+    );
     return response.data;
   } catch (error) {
     console.error(`Error updating pets: ${error.message}`);
@@ -188,9 +218,12 @@ export async function updateFoodAndShopping(foodAndShopping) {
   validateField(foodAndShopping.mealsOut, "Meals Out");
 
   try {
-    const response = await axios.post(`${SERVER_URL}/api/foodandshopping`, {
-      foodAndShopping,
-    });
+    const headers = await getAuthHeaders();
+    const response = await axios.post(
+      `${SERVER_URL}/api/foodandshopping`,
+      { foodAndShopping },
+      { headers }
+    );
     return response.data;
   } catch (error) {
     console.error(`Error updating foodAndShopping: ${error.message}`);
@@ -207,9 +240,12 @@ export async function updateAccountsAndSavings(accountsAndSavings) {
   validateField(accountsAndSavings.savings, "Savings");
 
   try {
-    const response = await axios.post(`${SERVER_URL}/api/accountsandsavings`, {
-      accountsAndSavings,
-    });
+    const headers = getAuthHeaders();
+    const response = await axios.post(
+      `${SERVER_URL}/api/accountsandsavings`,
+      { accountsAndSavings },
+      { headers }
+    );
     return response.data;
   } catch (error) {
     console.error(`Error updating accountsAndSavings: ${error.message}`);
