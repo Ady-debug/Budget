@@ -240,7 +240,7 @@ export async function updateAccountsAndSavings(accountsAndSavings) {
   validateField(accountsAndSavings.savings, "Savings");
 
   try {
-    const headers = getAuthHeaders();
+    const headers = await getAuthHeaders();
     const response = await axios.post(
       `${SERVER_URL}/api/accountsandsavings`,
       { accountsAndSavings },

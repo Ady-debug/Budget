@@ -10,6 +10,20 @@ CREATE TABLE budget(
   currency VARCHAR(3) DEFAULT 'GBP',
   period VARCHAR(20) DEFAULT 'monthly',
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  -- Ensure each user can only have one entry per category/item combination
+  CONSTRAINT unique_user_category_item UNIQUE (user_id, category, item)
+  -- Removes budget data when user is deleted
+  CONSTRAINT budget_user_id_fkey FOREIGN KEY (user_id) REFERENCES auth.users(id) ON DELETE CASCADE
+);
+
+-- Profiles table for user information
+CREATE TABLE profiles (
+  id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
+  email TEXT,
+  display_name TEXT,
+  avatar_url TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -22,17 +36,47 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Create trigger to automatically update updated_at on any UPDATE
+-- Function to automatically create profile when user signs up
+CREATE OR REPLACE FUNCTION create_profile_for_new_user()
+RETURNS TRIGGER AS $$
+BEGIN
+  INSERT INTO public.profiles (id, email, display_name, avatar_url)
+  VALUES (
+    NEW.id,
+    NEW.email,
+    NEW.raw_user_meta_data->>'full_name',
+    NEW.raw_user_meta_data->>'avatar_url'
+  );
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+-- Trigger that runs after a new user is created in auth.users
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW
+  EXECUTE FUNCTION create_profile_for_new_user();
+
+-- Trigger for budget updated_at
 CREATE TRIGGER set_updated_at
 BEFORE UPDATE ON budget
 FOR EACH ROW
 EXECUTE FUNCTION auto_update_timestamp();
 
+-- Trigger for profiles updated_at
+CREATE TRIGGER set_profiles_updated_at
+BEFORE UPDATE ON profiles
+FOR EACH ROW
+EXECUTE FUNCTION auto_update_timestamp();
+
 -- Indexes for better query performance
 CREATE INDEX idx_budget_user_id ON budget(user_id);
+CREATE INDEX idx_budget_category ON budget(category);
+CREATE INDEX idx_budget_user_category ON budget(user_id, category);
 
 -- Enable Row Level Security
 ALTER TABLE budget ENABLE ROW LEVEL SECURITY;
+ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 
 -- RLS Policies: Users can only access their own budget data
 CREATE POLICY "Users can view their own budget data"
@@ -55,6 +99,17 @@ CREATE POLICY "Users can delete their own budget data"
   FOR DELETE
   USING (auth.uid() = user_id);
 
--- TODO: Add foreign key constraints when full DB setup
--- Consider additional indexing
+CREATE POLICY "Users can view their own profile"
+  ON profiles
+  FOR SELECT
+  USING (auth.uid() = id);
 
+CREATE POLICY "Users can insert their own profile"
+  ON profiles
+  FOR INSERT
+  WITH CHECK (auth.uid() = id);
+
+CREATE POLICY "Users can update their own profile"
+  ON profiles
+  FOR UPDATE
+  USING (auth.uid() = id);
