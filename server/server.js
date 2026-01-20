@@ -16,20 +16,50 @@ await fastify.register(cors, {
   origin: process.env.CLIENT_URL,
 });
 
-// GET Budget
+// Auth Verification Middleware
 
-fastify.get("/api/budget", async (request, reply) => {
-  const { data, error } = await supabase
-    .from("budget")
-    .select("category,item,amount");
+async function verifyAuth(request, reply) {
+  const authHeader = request.headers.authorization;
 
-  if (error) {
-    reply.code(500).send({ error: error.message });
+  if (!authHeader) {
+    reply.code(401).send({ error: "No authorization header provided" });
     return;
   }
 
-  return { budget: data };
-});
+  const token = authHeader.replace("Bearer ", "");
+
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser(token);
+
+  if (error || !user) {
+    reply.code(401).send({ error: "Invalid or expired token" });
+    return;
+  }
+  request.user = user;
+}
+
+// GET Budget
+
+fastify.get(
+  "/api/budget",
+  { preHandler: verifyAuth },
+  async (request, reply) => {
+    const userId = request.user.id;
+    const { data, error } = await supabase
+      .from("budget")
+      .select("category,item,amount")
+      .eq("user_id", userId);
+
+    if (error) {
+      reply.code(500).send({ error: error.message });
+      return;
+    }
+
+    return { budget: data };
+  }
+);
 
 // POST Home Route Check
 
