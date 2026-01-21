@@ -24,13 +24,13 @@ export default function Auth() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100">
-      <div className="bg-white p-8 rounded-lg shadow-md w-96">
-        <h1 className="text-2xl font-bold mb-6 text-center">
-          Welcome to Budget App
+    <div className="flex flex-col items-center justify-center min-h-screen">
+      <div className="bg-white/60 dark:bg-white/10 border border-gray-200/60 dark:border-white/40 rounded-lg shadow-xl backdrop-blur-xl backdrop-saturate-150 hover:shadow-2xl hover:shadow-blue-500/30 transition-all duration-300 p-8 w-96">
+        <h1 className="text-2xl font-bold mb-6 text-center text-gray-900 dark:text-white">
+          Welcome!
         </h1>
-        <p className="text-gray-600 mb-6 text-center">
-          Sign in to manage your budget
+        <p className="text-gray-600 dark:text-gray-300 mb-6 text-center">
+          Sign in to build and manage your budget
         </p>
 
         {/* Error message display - only shows if error exists */}
@@ -44,7 +44,7 @@ export default function Auth() {
         <button
           onClick={handleGoogleLogin}
           disabled={loading}
-          className="w-full bg-white border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50 flex items-center justify-center gap-2 disabled:opacity-50"
+          className="w-full bg-white/40 dark:bg-white/20 backdrop-blur-md border border-gray-300/60 dark:border-white/30 text-gray-900 dark:text-white px-4 py-2 rounded-lg hover:bg-white/60 dark:hover:bg-white/30 hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-50 disabled:hover:scale-100"
         >
           {/* Google Logo SVG */}
           <svg className="w-5 h-5" viewBox="0 0 24 24">
