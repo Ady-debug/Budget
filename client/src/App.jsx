@@ -92,7 +92,9 @@ function App() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <p className="text-xl">Loading...</p>
+        <p className="mb-4 text-2xl font-bold tracking-tight text-gray-900 dark:text-white animate-pulse">
+          Loading...
+        </p>
       </div>
     );
   }
