@@ -21,22 +21,15 @@ function App() {
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
   const [budgetData, setBudgetData] = useState({
-    income: { wage: "", otherIncome: "" },
-    homeExpense: { mortgage: "", councilTax: "", homeInsurance: "" },
-    utilities: { gas: "", electricity: "", water: "" },
-    servicesAndSubscriptions: { phone: "", broadband: "", subscriptions: "" },
-    transportAndTravel: {
-      vehicleInsurance: "",
-      roadTax: "",
-      fuel: "",
-      breakdownCover: "",
-      MOTAndServices: "",
-      railAndBus: "",
-    },
-    personal: { clothingAndFootwear: "", hairdressing: "" },
-    pets: { petFood: "", insurance: "" },
-    foodAndShopping: { supermarketShopping: "", mealsOut: "" },
-    accountsAndSavings: { accountFees: "", savings: "" },
+    income: undefined,
+    homeExpense: undefined,
+    utilities: undefined,
+    servicesAndSubscriptions: undefined,
+    transportAndTravel: undefined,
+    personal: undefined,
+    pets: undefined,
+    foodAndShopping: undefined,
+    accountsAndSavings: undefined,
   });
   const [error, setError] = useState(null);
 

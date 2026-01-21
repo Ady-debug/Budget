@@ -14,17 +14,16 @@ async function getAuthHeaders() {
 }
 
 function validateField(value, fieldName) {
-  if (value < 0) {
+  const numValue = parseFloat(value);
+
+  if (isNaN(numValue)) {
+    throw new Error(`Enter a number for your ${fieldName}`);
+  }
+  if (numValue < 0) {
     throw new Error(`${fieldName} amount must be more or equal to 0`);
   }
-  if (value == null || isNaN(value)) {
-    throw new Error(`Please enter a number for your ${fieldName}`);
-  }
-  if (value > 99999999.99) {
+  if (numValue > 99999999.99) {
     throw new Error("Please enter an accurate amount, the figure is too high");
-  }
-  if (value === "") {
-    throw new Error(`Please enter a number for ${fieldName}`);
   }
 }
 
