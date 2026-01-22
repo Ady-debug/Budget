@@ -33,32 +33,45 @@ export default function Summary(props) {
   return (
     <div className="col-span-1 sm:col-span-1 lg:col-span-1">
       <Card title="Summary" error={null}>
-        <p className="font-normal text-gray-700 dark:text-gray-400 flex gap-5 mt-5">
-          <span className="w-40">{totalIncome > 0 && "Total Income:"}</span>
-          <span className="w-17">{totalIncome > 0 && `£${totalIncome}`}</span>
-        </p>
-        <p className="font-normal text-gray-700 dark:text-gray-400 flex gap-5 mt-5">
-          <span className="w-40">{totalExpenses > 0 && "Total Expenses:"}</span>
-          <span className="w-17">
-            {totalExpenses > 0 && `£${totalExpenses}`}
-          </span>
-        </p>
-        <p className="font-normal text-gray-700 dark:text-gray-400 flex gap-5 mt-5">
-          <span className="w-40">{surplus > 0 && "Surplus:"}</span>
-          <span className="w-17">{surplus > 0 && `£${surplus}`}</span>
-        </p>
-        {surplus < 0 && (
-          <p className="font-normal text-gray-700 dark:text-gray-400 mt-5">
-            You are in a deficit budget and need to reduce expenses, or increase
-            income, by £{Math.abs(surplus)} to make your budget balance
+        {totalIncome && totalExpenses > 0 ? (
+          <div>
+            <p className="font-normal text-gray-700 dark:text-gray-400 flex gap-5 mt-5">
+              <span className="w-40">{totalIncome > 0 && "Total Income:"}</span>
+              <span className="w-17">
+                {totalIncome > 0 && `£${totalIncome}`}
+              </span>
+            </p>
+            <p className="font-normal text-gray-700 dark:text-gray-400 flex gap-5 mt-5">
+              <span className="w-40">
+                {totalExpenses > 0 && "Total Expenses:"}
+              </span>
+              <span className="w-17">
+                {totalExpenses > 0 && `£${totalExpenses}`}
+              </span>
+            </p>
+            <p className="font-normal text-gray-700 dark:text-gray-400 flex gap-5 mt-5">
+              <span className="w-40">{surplus > 0 && "Surplus:"}</span>
+              <span className="w-17">{surplus > 0 && `£${surplus}`}</span>
+            </p>
+            {surplus < 0 && (
+              <p className="font-normal text-gray-700 dark:text-gray-400 mt-5">
+                You are in a deficit budget and need to reduce expenses, or
+                increase income, by £{Math.abs(surplus)} to make your budget
+                balance
+              </p>
+            )}
+            <p className="font-normal text-xs text-gray-700 dark:text-gray-400 flex gap-5 mt-5">
+              <span className="w-40"></span>
+              <span className="w-17">
+                {surplus > 0 && `£${(surplus / 4.333).toFixed(2)} per week`}
+              </span>
+            </p>
+          </div>
+        ) : (
+          <p className="text-gray-700 dark:text-gray-400 text-center py-8">
+            Awaiting budget info...
           </p>
         )}
-        <p className="font-normal text-xs text-gray-700 dark:text-gray-400 flex gap-5 mt-5">
-          <span className="w-40"></span>
-          <span className="w-17">
-            {surplus > 0 && `£${(surplus / 4.333).toFixed(2)} per week`}
-          </span>
-        </p>
       </Card>
     </div>
   );
