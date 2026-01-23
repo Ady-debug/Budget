@@ -2,6 +2,7 @@ import "dotenv/config";
 import { createClient } from "@supabase/supabase-js";
 import Fastify from "fastify";
 import cors from "@fastify/cors";
+import fastifyRateLimit from "@fastify/rate-limit";
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
@@ -12,12 +13,21 @@ const fastify = Fastify({
   logger: true,
 });
 
+// CORS registration
 await fastify.register(cors, {
   origin: process.env.CLIENT_URL,
 });
 
-// Enforce HTTPS
+// Rate limiting
+await fastify.register(fastifyRateLimit, {
+  max: 100,
+  timeWindow: "15 minutes",
+  cache: 10000,
+  allowList: ["127.0.0.1"],
+  skipOnError: false,
+});
 
+// Enforce HTTPS
 fastify.addHook("onRequest", (request, reply, done) => {
   if (
     process.env.NODE_ENV === "production" &&
@@ -29,7 +39,6 @@ fastify.addHook("onRequest", (request, reply, done) => {
 });
 
 // Auth Verification Middleware
-
 async function verifyAuth(request, reply) {
   const authHeader = request.headers.authorization;
 
@@ -53,7 +62,6 @@ async function verifyAuth(request, reply) {
 }
 
 // GET Budget
-
 fastify.get(
   "/api/budget",
   { preHandler: verifyAuth },
@@ -74,13 +82,11 @@ fastify.get(
 );
 
 // POST Home Route Check
-
 fastify.get("/", async (request, reply) => {
   return { hello: "World" };
 });
 
 // POST Income
-
 fastify.post(
   "/api/income",
   { preHandler: verifyAuth },
@@ -141,7 +147,6 @@ fastify.post(
 );
 
 // POST Home Expense
-
 fastify.post(
   "/api/home_expense",
   { preHandler: verifyAuth },
@@ -223,7 +228,6 @@ fastify.post(
 );
 
 // POST Utilities
-
 fastify.post(
   "/api/utilities",
   { preHandler: verifyAuth },
@@ -304,7 +308,6 @@ fastify.post(
 );
 
 // POST Services and Subscriptions
-
 fastify.post(
   "/api/servicesandsubscriptions",
   { preHandler: verifyAuth },
@@ -385,7 +388,6 @@ fastify.post(
 );
 
 // POST Transport and Travel
-
 fastify.post(
   "/api/transportandtravel",
   { preHandler: verifyAuth },
@@ -526,7 +528,6 @@ fastify.post(
 );
 
 // POST Personal Costs
-
 fastify.post(
   "/api/personal",
   { preHandler: verifyAuth },
@@ -587,7 +588,6 @@ fastify.post(
 );
 
 // POST Pets
-
 fastify.post(
   "/api/pets",
   { preHandler: verifyAuth },
@@ -648,7 +648,6 @@ fastify.post(
 );
 
 // POST Food and Shopping
-
 fastify.post(
   "/api/foodandshopping",
   { preHandler: verifyAuth },
@@ -709,7 +708,6 @@ fastify.post(
 );
 
 // POST Accounts and Savings
-
 fastify.post(
   "/api/accountsandsavings",
   { preHandler: verifyAuth },
@@ -770,7 +768,6 @@ fastify.post(
 );
 
 // Server start
-
 const start = async () => {
   try {
     await fastify.listen({ port: 3000 });
