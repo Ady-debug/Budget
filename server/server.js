@@ -16,6 +16,18 @@ await fastify.register(cors, {
   origin: process.env.CLIENT_URL,
 });
 
+// Enforce HTTPS
+
+fastify.addHook("onRequest", (request, reply, done) => {
+  if (
+    process.env.NODE_ENV === "production" &&
+    request.headers["x-forwarded-proto"] !== "https"
+  ) {
+    reply.redirect(301, `https://${request.headers.host}${request.url}`);
+  }
+  done();
+});
+
 // Auth Verification Middleware
 
 async function verifyAuth(request, reply) {
