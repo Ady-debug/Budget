@@ -19,13 +19,15 @@ await fastify.register(cors, {
 });
 
 // Rate limiting
-await fastify.register(fastifyRateLimit, {
-  max: 100,
-  timeWindow: "15 minutes",
-  cache: 10000,
-  allowList: ["127.0.0.1"],
-  skipOnError: false,
-});
+if (process.env.NODE_ENV === "production") {
+  await fastify.register(fastifyRateLimit, {
+    max: 100,
+    timeWindow: "15 minutes",
+    cache: 10000,
+    allowList: ["127.0.0.1"],
+    skipOnError: false,
+  });
+}
 
 // Enforce HTTPS
 fastify.addHook("onRequest", (request, reply, done) => {
