@@ -3,6 +3,17 @@ import { createClient } from "@supabase/supabase-js";
 import Fastify from "fastify";
 import cors from "@fastify/cors";
 import fastifyRateLimit from "@fastify/rate-limit";
+import {
+  incomeSchema,
+  homeExpenseSchema,
+  utilitiesSchema,
+  servicesAndSubscriptionsSchema,
+  transportAndTravelSchema,
+  personalSchema,
+  petsSchema,
+  foodAndShoppingSchema,
+  accountsAndSavingsSchema,
+} from "./schemas.js";
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
@@ -91,7 +102,7 @@ fastify.get("/", async (request, reply) => {
 // POST Income
 fastify.post(
   "/api/income",
-  { preHandler: verifyAuth },
+  { preHandler: verifyAuth, schema: incomeSchema },
   async (request, reply) => {
     const userId = request.user.id;
     const data = request.body.income;
@@ -151,7 +162,7 @@ fastify.post(
 // POST Home Expense
 fastify.post(
   "/api/home_expense",
-  { preHandler: verifyAuth },
+  { preHandler: verifyAuth, schema: homeExpenseSchema },
   async (request, reply) => {
     const userId = request.user.id;
     const data = request.body.homeExpense;
@@ -232,7 +243,7 @@ fastify.post(
 // POST Utilities
 fastify.post(
   "/api/utilities",
-  { preHandler: verifyAuth },
+  { preHandler: verifyAuth, schema: utilitiesSchema },
   async (request, reply) => {
     const userId = request.user.id;
     const data = request.body.utilities;
@@ -312,7 +323,7 @@ fastify.post(
 // POST Services and Subscriptions
 fastify.post(
   "/api/servicesandsubscriptions",
-  { preHandler: verifyAuth },
+  { preHandler: verifyAuth, schema: servicesAndSubscriptionsSchema },
   async (request, reply) => {
     const userId = request.user.id;
     const data = request.body.servicesAndSubscriptions;
@@ -392,7 +403,7 @@ fastify.post(
 // POST Transport and Travel
 fastify.post(
   "/api/transportandtravel",
-  { preHandler: verifyAuth },
+  { preHandler: verifyAuth, schema: transportAndTravelSchema },
   async (request, reply) => {
     const userId = request.user.id;
     const data = request.body.transportAndTravel;
@@ -532,7 +543,7 @@ fastify.post(
 // POST Personal Costs
 fastify.post(
   "/api/personal",
-  { preHandler: verifyAuth },
+  { preHandler: verifyAuth, schema: personalSchema },
   async (request, reply) => {
     const userId = request.user.id;
     const data = request.body.personal;
@@ -592,7 +603,7 @@ fastify.post(
 // POST Pets
 fastify.post(
   "/api/pets",
-  { preHandler: verifyAuth },
+  { preHandler: verifyAuth, schema: petsSchema },
   async (request, reply) => {
     const userId = request.user.id;
     const data = request.body.pets;
@@ -652,7 +663,7 @@ fastify.post(
 // POST Food and Shopping
 fastify.post(
   "/api/foodandshopping",
-  { preHandler: verifyAuth },
+  { preHandler: verifyAuth, schema: foodAndShoppingSchema },
   async (request, reply) => {
     const userId = request.user.id;
     const data = request.body.foodAndShopping;
@@ -712,7 +723,7 @@ fastify.post(
 // POST Accounts and Savings
 fastify.post(
   "/api/accountsandsavings",
-  { preHandler: verifyAuth },
+  { preHandler: verifyAuth, schema: accountsAndSavingsSchema },
   async (request, reply) => {
     const userId = request.user.id;
     const data = request.body.accountsAndSavings;
