@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { updateIncome } from "../../api";
 import Card from "./card";
 import Input from "./Input";
@@ -11,6 +11,7 @@ export default function Income(props) {
     otherIncome: "",
   });
   const [error, setError] = useState(null);
+  const isInitialLoad = useRef(true);
 
   useEffect(() => {
     if (data) {
@@ -18,10 +19,14 @@ export default function Income(props) {
         wage: parseFloat(data.wage).toFixed(2),
         otherIncome: parseFloat(data.otherIncome).toFixed(2),
       });
+      isInitialLoad.current = false;
     }
   }, [data]);
 
   useEffect(() => {
+    if (isInitialLoad.current) {
+      return;
+    }
     const updateData = setTimeout(() => {
       async function sendUpdatedIncome(income) {
         try {
