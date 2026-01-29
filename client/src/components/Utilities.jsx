@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { updateUtilities } from "../../api";
 import Card from "./card";
 import Input from "./Input";
@@ -12,6 +12,7 @@ export default function Utilities(props) {
     water: "",
   });
   const [error, setError] = useState(null);
+  const isInitialLoad = useRef(true);
 
   useEffect(() => {
     if (data) {
@@ -20,10 +21,14 @@ export default function Utilities(props) {
         electricity: parseFloat(data.electricity).toFixed(2) || "",
         water: parseFloat(data.water).toFixed(2) || "",
       });
+      isInitialLoad.current = false;
     }
   }, [data]);
 
   useEffect(() => {
+    if (isInitialLoad.current) {
+      return;
+    }
     const updateData = setTimeout(() => {
       async function sendUpdatedUtilities(utilities) {
         try {
@@ -47,7 +52,8 @@ export default function Utilities(props) {
       sendUpdatedUtilities(utilities);
     }, 1000);
     return () => clearTimeout(updateData);
-  }, [utilities, onUpdate]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [utilities]); // onUpdate intentionally omitted to prevent unnecessary re-runs
 
   function updateAmount(event) {
     const { name, value } = event.target;

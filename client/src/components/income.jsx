@@ -47,7 +47,8 @@ export default function Income(props) {
       sendUpdatedIncome(income);
     }, 1000);
     return () => clearTimeout(updateData);
-  }, [income, onUpdate]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [income]); // onUpdate intentionally omitted to prevent unnecessary re-runs
 
   function updateAmount(event) {
     const { name, value } = event.target;

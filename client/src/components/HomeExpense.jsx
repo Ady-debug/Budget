@@ -58,7 +58,8 @@ export default function HomeExpense(props) {
       sendHomeExpense(homeExpense);
     }, 1000);
     return () => clearTimeout(updateData);
-  }, [homeExpense, onUpdate]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [homeExpense]); // onUpdate intentionally omitted to prevent unnecessary re-runs
 
   function updateAmount(event) {
     const { name, value } = event.target;
