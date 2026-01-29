@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { updateHomeExpense } from "../../api";
 import Card from "./card";
 import Input from "./Input";
@@ -12,6 +12,7 @@ export default function HomeExpense(props) {
     homeInsurance: "",
   });
   const [error, setError] = useState(null);
+  const isInitialLoad = useRef(true);
 
   useEffect(() => {
     if (data) {
@@ -20,10 +21,14 @@ export default function HomeExpense(props) {
         councilTax: parseFloat(data.councilTax).toFixed(2) || "",
         homeInsurance: parseFloat(data.homeInsurance).toFixed(2) || "",
       });
+      isInitialLoad.current = false;
     }
   }, [data]);
 
   useEffect(() => {
+    if (isInitialLoad.current) {
+      return;
+    }
     const updateData = setTimeout(() => {
       async function sendHomeExpense(homeExpense) {
         try {
