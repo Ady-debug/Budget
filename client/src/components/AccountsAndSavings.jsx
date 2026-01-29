@@ -11,6 +11,7 @@ export default function AccountsAndSavings(props) {
     savings: "",
   });
   const [error, setError] = useState(null);
+  const [pendingUpdate, setPendingUpdate] = useState(null);
 
   useEffect(() => {
     if (data) {
@@ -22,32 +23,34 @@ export default function AccountsAndSavings(props) {
   }, [data]);
 
   useEffect(() => {
-    const updateData = setTimeout(() => {
-      async function sendAccountsAndSavings(accountsAndSavings) {
-        try {
-          await updateAccountsAndSavings(accountsAndSavings);
-          setError(null);
-          if (onUpdate) {
-            //Updates data in app.jsx for use in other components
-            onUpdate({
-              accountFees:
-                accountsAndSavings.accountFees === ""
-                  ? ""
-                  : parseFloat(accountsAndSavings.accountFees),
-              savings:
-                accountsAndSavings.savings === ""
-                  ? ""
-                  : parseFloat(accountsAndSavings.savings),
-            });
-          }
-        } catch (error) {
-          setError(error);
+    if (!pendingUpdate) return;
+
+    const timer = setTimeout(async () => {
+      console.log("Timer fired, calling API");
+      try {
+        await updateAccountsAndSavings(pendingUpdate);
+        setError(null);
+        if (onUpdate) {
+          onUpdate({
+            accountFees:
+              pendingUpdate.accountFees === ""
+                ? ""
+                : parseFloat(pendingUpdate.accountFees),
+            savings:
+              pendingUpdate.savings === ""
+                ? ""
+                : parseFloat(pendingUpdate.savings),
+          });
         }
+        setPendingUpdate(null);
+      } catch (error) {
+        setError(error);
       }
-      sendAccountsAndSavings(accountsAndSavings);
     }, 1000);
-    return () => clearTimeout(updateData);
-  }, [accountsAndSavings, onUpdate]);
+
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pendingUpdate]);
 
   function updateAmount(event) {
     const { name, value } = event.target;
@@ -58,15 +61,62 @@ export default function AccountsAndSavings(props) {
       return;
     }
 
-    setAccountsAndSavings((prevItems) => {
-      const updatedAmount = {
-        ...prevItems,
-        [name]: value == "" ? "" : value,
-      };
-      setError(null);
-      return updatedAmount;
-    });
+    const newState = {
+      ...accountsAndSavings,
+      [name]: value === "" ? "" : value,
+    };
+
+    setAccountsAndSavings(newState);
+    setPendingUpdate(newState);
+    setError(null);
   }
+
+  //   const updateData = setTimeout(() => {
+  //     async function sendAccountsAndSavings(accountsAndSavings) {
+  //       try {
+  //         await updateAccountsAndSavings(accountsAndSavings);
+  //         setError(null);
+  //         if (onUpdate) {
+  //           //Updates data in app.jsx for use in other components
+  //           onUpdate({
+  //             accountFees:
+  //               accountsAndSavings.accountFees === ""
+  //                 ? ""
+  //                 : parseFloat(accountsAndSavings.accountFees),
+  //             savings:
+  //               accountsAndSavings.savings === ""
+  //                 ? ""
+  //                 : parseFloat(accountsAndSavings.savings),
+  //           });
+  //         }
+  //       } catch (error) {
+  //         setError(error);
+  //       }
+  //     }
+  //     sendAccountsAndSavings(accountsAndSavings);
+  //   }, 1000);
+  //   return () => clearTimeout(updateData);
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [accountsAndSavings]); // onUpdate intentionally omitted to prevent unnecessary re-runs
+
+  // function updateAmount(event) {
+  //   const { name, value } = event.target;
+
+  //   const valueToNumber = parseFloat(value);
+  //   if (value !== "" && isNaN(valueToNumber)) {
+  //     setError("Please enter a number");
+  //     return;
+  //   }
+
+  //   setAccountsAndSavings((prevItems) => {
+  //     const updatedAmount = {
+  //       ...prevItems,
+  //       [name]: value == "" ? "" : value,
+  //     };
+  //     setError(null);
+  //     return updatedAmount;
+  //   });
+  // }
 
   let total =
     parseFloat(accountsAndSavings.accountFees) +
