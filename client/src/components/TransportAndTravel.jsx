@@ -15,6 +15,7 @@ export default function TransportAndTravel(props) {
     railAndBus: "",
   });
   const [error, setError] = useState(null);
+  const [pendingUpdate, setPendingUpdate] = useState(null);
 
   useEffect(() => {
     if (data) {
@@ -30,48 +31,48 @@ export default function TransportAndTravel(props) {
   }, [data]);
 
   useEffect(() => {
-    const updateData = setTimeout(() => {
-      async function sendTransportAndTravel(transportAndTravel) {
-        try {
-          await updateTransportAndTravel(transportAndTravel);
-          setError(null);
-          if (onUpdate) {
-            //Updates data in app.jsx for use in other components
-            onUpdate({
-              vehicleInsurance:
-                transportAndTravel.vehicleInsurance === ""
-                  ? ""
-                  : parseFloat(transportAndTravel.vehicleInsurance),
-              roadTax:
-                transportAndTravel.roadTax === ""
-                  ? ""
-                  : parseFloat(transportAndTravel.roadTax),
-              fuel:
-                transportAndTravel.fuel === ""
-                  ? ""
-                  : parseFloat(transportAndTravel.fuel),
-              breakdownCover:
-                transportAndTravel.breakdownCover === ""
-                  ? ""
-                  : parseFloat(transportAndTravel.breakdownCover),
-              MOTAndServices:
-                transportAndTravel.MOTAndServices === ""
-                  ? ""
-                  : parseFloat(transportAndTravel.MOTAndServices),
-              railAndBus:
-                transportAndTravel.railAndBus === ""
-                  ? ""
-                  : parseFloat(transportAndTravel.railAndBus),
-            });
-          }
-        } catch (error) {
-          setError(error);
+    if (!pendingUpdate) return;
+
+    const timer = setTimeout(async () => {
+      console.log("Timer fired, calling API");
+      try {
+        await updateTransportAndTravel(pendingUpdate);
+        setError(null);
+        if (onUpdate) {
+          onUpdate({
+            vehicleInsurance:
+              pendingUpdate.vehicleInsurance === ""
+                ? ""
+                : parseFloat(pendingUpdate.vehicleInsurance),
+            roadTax:
+              pendingUpdate.roadTax === ""
+                ? ""
+                : parseFloat(pendingUpdate.roadTax),
+            fuel:
+              pendingUpdate.fuel === "" ? "" : parseFloat(pendingUpdate.fuel),
+            breakdownCover:
+              pendingUpdate.breakdownCover === ""
+                ? ""
+                : parseFloat(pendingUpdate.breakdownCover),
+            MOTAndServices:
+              pendingUpdate.MOTAndServices === ""
+                ? ""
+                : parseFloat(pendingUpdate.MOTAndServices),
+            railAndBus:
+              pendingUpdate.railAndBus === ""
+                ? ""
+                : parseFloat(pendingUpdate.railAndBus),
+          });
         }
+        setPendingUpdate(null);
+      } catch (error) {
+        setError(error);
       }
-      sendTransportAndTravel(transportAndTravel);
     }, 1000);
-    return () => clearTimeout(updateData);
-  }, [transportAndTravel, onUpdate]);
+
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pendingUpdate]);
 
   function updateAmount(event) {
     const { name, value } = event.target;
@@ -82,14 +83,14 @@ export default function TransportAndTravel(props) {
       return;
     }
 
-    setTransportAndTravel((prevItems) => {
-      const updatedAmount = {
-        ...prevItems,
-        [name]: value == "" ? "" : value,
-      };
-      setError(null);
-      return updatedAmount;
-    });
+    const newState = {
+      ...transportAndTravel,
+      [name]: value === "" ? "" : value,
+    };
+
+    setTransportAndTravel(newState);
+    setPendingUpdate(newState);
+    setError(null);
   }
 
   let total =

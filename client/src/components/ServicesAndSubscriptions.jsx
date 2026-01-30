@@ -12,6 +12,7 @@ export default function ServicesAndSubscriptions(props) {
     subscriptions: "",
   });
   const [error, setError] = useState(null);
+  const [pendingUpdate, setPendingUpdate] = useState(null);
 
   useEffect(() => {
     if (data) {
@@ -24,36 +25,36 @@ export default function ServicesAndSubscriptions(props) {
   }, [data]);
 
   useEffect(() => {
-    const updateData = setTimeout(() => {
-      async function sendServicesAndSubscriptions(servicesAndSubscriptions) {
-        try {
-          await updateServicesAndSubscriptions(servicesAndSubscriptions);
-          setError(null);
-          if (onUpdate) {
-            //Updates data in app.jsx for use in other components
-            onUpdate({
-              phone:
-                servicesAndSubscriptions.phone === ""
-                  ? ""
-                  : parseFloat(servicesAndSubscriptions.phone),
-              broadband:
-                servicesAndSubscriptions.broadband === ""
-                  ? ""
-                  : parseFloat(servicesAndSubscriptions.broadband),
-              subscriptions:
-                servicesAndSubscriptions.subscriptions === ""
-                  ? ""
-                  : parseFloat(servicesAndSubscriptions.subscriptions),
-            });
-          }
-        } catch (error) {
-          setError(error);
+    if (!pendingUpdate) return;
+
+    const timer = setTimeout(async () => {
+      console.log("Timer fired, calling API");
+      try {
+        await updateServicesAndSubscriptions(pendingUpdate);
+        setError(null);
+        if (onUpdate) {
+          onUpdate({
+            phone:
+              pendingUpdate.phone === "" ? "" : parseFloat(pendingUpdate.phone),
+            broadband:
+              pendingUpdate.broadband === ""
+                ? ""
+                : parseFloat(pendingUpdate.broadband),
+            subscriptions:
+              pendingUpdate.subscriptions === ""
+                ? ""
+                : parseFloat(pendingUpdate.subscriptions),
+          });
         }
+        setPendingUpdate(null);
+      } catch (error) {
+        setError(error);
       }
-      sendServicesAndSubscriptions(servicesAndSubscriptions);
     }, 1000);
-    return () => clearTimeout(updateData);
-  }, [servicesAndSubscriptions, onUpdate]);
+
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pendingUpdate]);
 
   function updateAmount(event) {
     const { name, value } = event.target;
@@ -64,14 +65,14 @@ export default function ServicesAndSubscriptions(props) {
       return;
     }
 
-    setServicesAndSubscriptions((prevItems) => {
-      const updatedAmount = {
-        ...prevItems,
-        [name]: value == "" ? "" : value,
-      };
-      setError(null);
-      return updatedAmount;
-    });
+    const newState = {
+      ...servicesAndSubscriptions,
+      [name]: value === "" ? "" : value,
+    };
+
+    setServicesAndSubscriptions(newState);
+    setPendingUpdate(newState);
+    setError(null);
   }
 
   let total =

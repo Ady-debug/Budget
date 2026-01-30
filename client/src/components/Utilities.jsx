@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { updateUtilities } from "../../api";
 import Card from "./card";
 import Input from "./Input";
@@ -12,7 +12,7 @@ export default function Utilities(props) {
     water: "",
   });
   const [error, setError] = useState(null);
-  const isInitialLoad = useRef(true);
+  const [pendingUpdate, setPendingUpdate] = useState(null);
 
   useEffect(() => {
     if (data) {
@@ -21,39 +21,37 @@ export default function Utilities(props) {
         electricity: parseFloat(data.electricity).toFixed(2) || "",
         water: parseFloat(data.water).toFixed(2) || "",
       });
-      isInitialLoad.current = false;
     }
   }, [data]);
 
   useEffect(() => {
-    if (isInitialLoad.current) {
-      return;
-    }
-    const updateData = setTimeout(() => {
-      async function sendUpdatedUtilities(utilities) {
-        try {
-          await updateUtilities(utilities);
-          setError(null);
-          if (onUpdate) {
-            //Updates data in app.jsx for use in other components
-            onUpdate({
-              gas: utilities.gas === "" ? "" : parseFloat(utilities.gas),
-              electricity:
-                utilities.electricity === ""
-                  ? ""
-                  : parseFloat(utilities.electricity),
-              water: utilities.water === "" ? "" : parseFloat(utilities.water),
-            });
-          }
-        } catch (error) {
-          setError(error);
+    if (!pendingUpdate) return;
+
+    const timer = setTimeout(async () => {
+      console.log("Timer fired, calling API");
+      try {
+        await updateUtilities(pendingUpdate);
+        setError(null);
+        if (onUpdate) {
+          onUpdate({
+            gas: pendingUpdate.gas === "" ? "" : parseFloat(pendingUpdate.gas),
+            electricity:
+              pendingUpdate.electricity === ""
+                ? ""
+                : parseFloat(pendingUpdate.electricity),
+            water:
+              pendingUpdate.water === "" ? "" : parseFloat(pendingUpdate.water),
+          });
         }
+        setPendingUpdate(null);
+      } catch (error) {
+        setError(error);
       }
-      sendUpdatedUtilities(utilities);
     }, 1000);
-    return () => clearTimeout(updateData);
+
+    return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [utilities]); // onUpdate intentionally omitted to prevent unnecessary re-runs
+  }, [pendingUpdate]);
 
   function updateAmount(event) {
     const { name, value } = event.target;
@@ -64,14 +62,14 @@ export default function Utilities(props) {
       return;
     }
 
-    setUtilities((prevItems) => {
-      const updatedAmount = {
-        ...prevItems,
-        [name]: value == "" ? "" : value,
-      };
-      setError(null);
-      return updatedAmount;
-    });
+    const newState = {
+      ...utilities,
+      [name]: value === "" ? "" : value,
+    };
+
+    setUtilities(newState);
+    setPendingUpdate(newState);
+    setError(null);
   }
 
   let total =

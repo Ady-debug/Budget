@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { updateIncome } from "../../api";
 import Card from "./card";
 import Input from "./Input";
@@ -11,7 +11,7 @@ export default function Income(props) {
     otherIncome: "",
   });
   const [error, setError] = useState(null);
-  const isInitialLoad = useRef(true);
+  const [pendingUpdate, setPendingUpdate] = useState(null);
 
   useEffect(() => {
     if (data) {
@@ -19,36 +19,35 @@ export default function Income(props) {
         wage: parseFloat(data.wage).toFixed(2),
         otherIncome: parseFloat(data.otherIncome).toFixed(2),
       });
-      isInitialLoad.current = false;
     }
   }, [data]);
 
   useEffect(() => {
-    if (isInitialLoad.current) {
-      return;
-    }
-    const updateData = setTimeout(() => {
-      async function sendUpdatedIncome(income) {
-        try {
-          await updateIncome(income);
-          setError(null);
-          if (onUpdate) {
-            //Updates data in app.jsx for use in other components
-            onUpdate({
-              wage: income.wage === "" ? "" : parseFloat(income.wage),
-              otherIncome:
-                income.otherIncome === "" ? "" : parseFloat(income.otherIncome),
-            });
-          }
-        } catch (error) {
-          setError(error);
+    if (!pendingUpdate) return;
+
+    const timer = setTimeout(async () => {
+      try {
+        await updateIncome(pendingUpdate);
+        setError(null);
+        if (onUpdate) {
+          onUpdate({
+            wage:
+              pendingUpdate.wage === "" ? "" : parseFloat(pendingUpdate.wage),
+            otherIncome:
+              pendingUpdate.otherIncome === ""
+                ? ""
+                : parseFloat(pendingUpdate.otherIncome),
+          });
         }
+        setPendingUpdate(null);
+      } catch (error) {
+        setError(error);
       }
-      sendUpdatedIncome(income);
     }, 1000);
-    return () => clearTimeout(updateData);
+
+    return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [income]); // onUpdate intentionally omitted to prevent unnecessary re-runs
+  }, [pendingUpdate]);
 
   function updateAmount(event) {
     const { name, value } = event.target;
@@ -59,14 +58,14 @@ export default function Income(props) {
       return;
     }
 
-    setIncome((prevItems) => {
-      const updatedAmount = {
-        ...prevItems,
-        [name]: value == "" ? "" : value,
-      };
-      setError(null);
-      return updatedAmount;
-    });
+    const newState = {
+      ...income,
+      [name]: value === "" ? "" : value,
+    };
+
+    setIncome(newState);
+    setPendingUpdate(newState);
+    setError(null);
   }
 
   let total = parseFloat(income.wage) + parseFloat(income.otherIncome);

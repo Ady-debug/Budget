@@ -11,6 +11,7 @@ export default function Personal(props) {
     hairdressing: "",
   });
   const [error, setError] = useState(null);
+  const [pendingUpdate, setPendingUpdate] = useState(null);
 
   useEffect(() => {
     if (data) {
@@ -23,32 +24,33 @@ export default function Personal(props) {
   }, [data]);
 
   useEffect(() => {
-    const updateData = setTimeout(() => {
-      async function sendPersonal(personal) {
-        try {
-          await updatePersonal(personal);
-          setError(null);
-          if (onUpdate) {
-            //Updates data in app.jsx for use in other components
-            onUpdate({
-              clothingAndFootwear:
-                personal.clothingAndFootwear === ""
-                  ? ""
-                  : parseFloat(personal.clothingAndFootwear),
-              hairdressing:
-                personal.hairdressing === ""
-                  ? ""
-                  : parseFloat(personal.hairdressing),
-            });
-          }
-        } catch (error) {
-          setError(error);
+    if (!pendingUpdate) return;
+
+    const timer = setTimeout(async () => {
+      try {
+        await updatePersonal(pendingUpdate);
+        setError(null);
+        if (onUpdate) {
+          onUpdate({
+            clothingAndFootwear:
+              pendingUpdate.clothingAndFootwear === ""
+                ? ""
+                : parseFloat(pendingUpdate.clothingAndFootwear),
+            hairdressing:
+              pendingUpdate.hairdressing === ""
+                ? ""
+                : parseFloat(pendingUpdate.hairdressing),
+          });
         }
+        setPendingUpdate(null);
+      } catch (error) {
+        setError(error);
       }
-      sendPersonal(personal);
     }, 1000);
-    return () => clearTimeout(updateData);
-  }, [personal, onUpdate]);
+
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pendingUpdate]);
 
   function updateAmount(event) {
     const { name, value } = event.target;
@@ -59,14 +61,14 @@ export default function Personal(props) {
       return;
     }
 
-    setPersonal((prevItems) => {
-      const updatedAmount = {
-        ...prevItems,
-        [name]: value == "" ? "" : value,
-      };
-      setError(null);
-      return updatedAmount;
-    });
+    const newState = {
+      ...personal,
+      [name]: value === "" ? "" : value,
+    };
+
+    setPersonal(newState);
+    setPendingUpdate(newState);
+    setError(null);
   }
 
   let total =

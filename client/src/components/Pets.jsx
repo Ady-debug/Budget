@@ -11,6 +11,7 @@ export default function Pets(props) {
     insurance: "",
   });
   const [error, setError] = useState(null);
+  const [pendingUpdate, setPendingUpdate] = useState(null);
 
   useEffect(() => {
     if (data) {
@@ -22,27 +23,33 @@ export default function Pets(props) {
   }, [data]);
 
   useEffect(() => {
-    const updateData = setTimeout(() => {
-      async function sendPets(pets) {
-        try {
-          await updatePets(pets);
-          setError(null);
-          if (onUpdate) {
-            //Updates data in app.jsx for use in other components
-            onUpdate({
-              petFood: pets.petFood === "" ? "" : parseFloat(pets.petFood),
-              insurance:
-                pets.insurance === "" ? "" : parseFloat(pets.insurance),
-            });
-          }
-        } catch (error) {
-          setError(error);
+    if (!pendingUpdate) return;
+
+    const timer = setTimeout(async () => {
+      try {
+        await updatePets(pendingUpdate);
+        setError(null);
+        if (onUpdate) {
+          onUpdate({
+            petFood:
+              pendingUpdate.petFood === ""
+                ? ""
+                : parseFloat(pendingUpdate.petFood),
+            insurance:
+              pendingUpdate.insurance === ""
+                ? ""
+                : parseFloat(pendingUpdate.insurance),
+          });
         }
+        setPendingUpdate(null);
+      } catch (error) {
+        setError(error);
       }
-      sendPets(pets);
     }, 1000);
-    return () => clearTimeout(updateData);
-  }, [pets, onUpdate]);
+
+    return () => clearTimeout(timer);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pendingUpdate]);
 
   function updateAmount(event) {
     const { name, value } = event.target;
@@ -53,14 +60,14 @@ export default function Pets(props) {
       return;
     }
 
-    setPets((prevItems) => {
-      const updatedAmount = {
-        ...prevItems,
-        [name]: value == "" ? "" : value,
-      };
-      setError(null);
-      return updatedAmount;
-    });
+    const newState = {
+      ...pets,
+      [name]: value === "" ? "" : value,
+    };
+
+    setPets(newState);
+    setPendingUpdate(newState);
+    setError(null);
   }
 
   let total = parseFloat(pets.petFood) + parseFloat(pets.insurance);

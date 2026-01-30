@@ -26,7 +26,6 @@ export default function AccountsAndSavings(props) {
     if (!pendingUpdate) return;
 
     const timer = setTimeout(async () => {
-      console.log("Timer fired, calling API");
       try {
         await updateAccountsAndSavings(pendingUpdate);
         setError(null);
@@ -70,53 +69,6 @@ export default function AccountsAndSavings(props) {
     setPendingUpdate(newState);
     setError(null);
   }
-
-  //   const updateData = setTimeout(() => {
-  //     async function sendAccountsAndSavings(accountsAndSavings) {
-  //       try {
-  //         await updateAccountsAndSavings(accountsAndSavings);
-  //         setError(null);
-  //         if (onUpdate) {
-  //           //Updates data in app.jsx for use in other components
-  //           onUpdate({
-  //             accountFees:
-  //               accountsAndSavings.accountFees === ""
-  //                 ? ""
-  //                 : parseFloat(accountsAndSavings.accountFees),
-  //             savings:
-  //               accountsAndSavings.savings === ""
-  //                 ? ""
-  //                 : parseFloat(accountsAndSavings.savings),
-  //           });
-  //         }
-  //       } catch (error) {
-  //         setError(error);
-  //       }
-  //     }
-  //     sendAccountsAndSavings(accountsAndSavings);
-  //   }, 1000);
-  //   return () => clearTimeout(updateData);
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [accountsAndSavings]); // onUpdate intentionally omitted to prevent unnecessary re-runs
-
-  // function updateAmount(event) {
-  //   const { name, value } = event.target;
-
-  //   const valueToNumber = parseFloat(value);
-  //   if (value !== "" && isNaN(valueToNumber)) {
-  //     setError("Please enter a number");
-  //     return;
-  //   }
-
-  //   setAccountsAndSavings((prevItems) => {
-  //     const updatedAmount = {
-  //       ...prevItems,
-  //       [name]: value == "" ? "" : value,
-  //     };
-  //     setError(null);
-  //     return updatedAmount;
-  //   });
-  // }
 
   let total =
     parseFloat(accountsAndSavings.accountFees) +

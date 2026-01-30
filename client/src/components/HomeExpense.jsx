@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { updateHomeExpense } from "../../api";
 import Card from "./card";
 import Input from "./Input";
@@ -12,7 +12,7 @@ export default function HomeExpense(props) {
     homeInsurance: "",
   });
   const [error, setError] = useState(null);
-  const isInitialLoad = useRef(true);
+  const [pendingUpdate, setPendingUpdate] = useState(null);
 
   useEffect(() => {
     if (data) {
@@ -21,45 +21,41 @@ export default function HomeExpense(props) {
         councilTax: parseFloat(data.councilTax).toFixed(2) || "",
         homeInsurance: parseFloat(data.homeInsurance).toFixed(2) || "",
       });
-      isInitialLoad.current = false;
     }
   }, [data]);
 
   useEffect(() => {
-    if (isInitialLoad.current) {
-      return;
-    }
-    const updateData = setTimeout(() => {
-      async function sendHomeExpense(homeExpense) {
-        try {
-          await updateHomeExpense(homeExpense);
-          setError(null);
-          if (onUpdate) {
-            //Updates data in app.jsx for use in other components
-            onUpdate({
-              mortgage:
-                homeExpense.mortgage === ""
-                  ? ""
-                  : parseFloat(homeExpense.mortgage),
-              councilTax:
-                homeExpense.councilTax === ""
-                  ? ""
-                  : parseFloat(homeExpense.councilTax),
-              homeInsurance:
-                homeExpense.homeInsurance === ""
-                  ? ""
-                  : parseFloat(homeExpense.homeInsurance),
-            });
-          }
-        } catch (error) {
-          setError(error);
+    if (!pendingUpdate) return;
+
+    const timer = setTimeout(async () => {
+      try {
+        await updateHomeExpense(pendingUpdate);
+        setError(null);
+        if (onUpdate) {
+          onUpdate({
+            mortgage:
+              pendingUpdate.mortgage === ""
+                ? ""
+                : parseFloat(pendingUpdate.mortgage),
+            councilTax:
+              pendingUpdate.councilTax === ""
+                ? ""
+                : parseFloat(pendingUpdate.councilTax),
+            homeInsurance:
+              pendingUpdate.homeInsurance === ""
+                ? ""
+                : parseFloat(pendingUpdate.homeInsurance),
+          });
         }
+        setPendingUpdate(null);
+      } catch (error) {
+        setError(error);
       }
-      sendHomeExpense(homeExpense);
     }, 1000);
-    return () => clearTimeout(updateData);
+
+    return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [homeExpense]); // onUpdate intentionally omitted to prevent unnecessary re-runs
+  }, [pendingUpdate]);
 
   function updateAmount(event) {
     const { name, value } = event.target;
@@ -70,14 +66,14 @@ export default function HomeExpense(props) {
       return;
     }
 
-    setHomeExpense((prevItems) => {
-      const updatedAmount = {
-        ...prevItems,
-        [name]: value == "" ? "" : value,
-      };
-      setError(null);
-      return updatedAmount;
-    });
+    const newState = {
+      ...homeExpense,
+      [name]: value === "" ? "" : value,
+    };
+
+    setHomeExpense(newState);
+    setPendingUpdate(newState);
+    setError(null);
   }
 
   let total =
