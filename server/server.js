@@ -3,6 +3,7 @@ import { createClient } from "@supabase/supabase-js";
 import Fastify from "fastify";
 import cors from "@fastify/cors";
 import fastifyRateLimit from "@fastify/rate-limit";
+import helmet from "@fastify/helmet";
 import {
   incomeSchema,
   homeExpenseSchema,
@@ -17,7 +18,7 @@ import {
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
-  process.env.SUPABASE_SERVICE_KEY
+  process.env.SUPABASE_SERVICE_KEY,
 );
 
 const fastify = Fastify({
@@ -27,6 +28,45 @@ const fastify = Fastify({
 // CORS registration
 await fastify.register(cors, {
   origin: process.env.CLIENT_URL,
+});
+
+// Helmet security headers
+await fastify.register(helmet, {
+  // Content Security Policy
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"], // Only load resources from this domain by default
+      scriptSrc: ["'self'"], // Only run scripts from this domain
+      styleSrc: ["'self'", "'unsafe-inline'"], // Styles from this domain + inline styles (needed for React)
+      imgSrc: ["'self'", "data:", "https:"], // Images from this domain, data URIs, and HTTPS sources
+      connectSrc: ["'self'", process.env.SUPABASE_URL], // API calls to this server and Supabase
+      fontSrc: ["'self'"], // Fonts only from this domain
+      objectSrc: ["'none'"], // Disable plugins like Flash
+      mediaSrc: ["'self'"], // Media from this domain only
+      frameSrc: ["'none'"], // No iframes
+    },
+  },
+  // Clickjacking protection
+  frameguard: {
+    action: "deny", // Prevent site from being in any iframe
+  },
+  // MIME-sniffing protection
+  noSniff: true,
+  // Hide X-Powered-By header to not reveal Fastify use
+  hidePoweredBy: true,
+  // HSTS - force HTTPS (only in production)
+  hsts:
+    process.env.NODE_ENV === "production"
+      ? {
+          maxAge: 31536000, // 1 year in seconds
+          includeSubDomains: true, // Apply to all subdomains
+          preload: true, // Allow browser HSTS preload lists
+        }
+      : false,
+  // Control referrer information
+  referrerPolicy: {
+    policy: "strict-origin-when-cross-origin", // Only send origin to external sites, full URL to this site
+  },
 });
 
 // Rate limiting
@@ -91,7 +131,7 @@ fastify.get(
     }
 
     return { budget: data };
-  }
+  },
 );
 
 // POST Home Route Check
@@ -122,7 +162,7 @@ fastify.post(
             },
             {
               onConflict: "user_id,category,item",
-            }
+            },
           )
           .select();
 
@@ -143,7 +183,7 @@ fastify.post(
             },
             {
               onConflict: "user_id,category,item",
-            }
+            },
           )
           .select();
 
@@ -156,7 +196,7 @@ fastify.post(
       reply.code(400).send({ error: error.message });
       return;
     }
-  }
+  },
 );
 
 // POST Home Expense
@@ -183,7 +223,7 @@ fastify.post(
             },
             {
               onConflict: "user_id,category,item",
-            }
+            },
           )
           .select();
 
@@ -204,7 +244,7 @@ fastify.post(
             },
             {
               onConflict: "user_id,category,item",
-            }
+            },
           )
           .select();
 
@@ -224,7 +264,7 @@ fastify.post(
             },
             {
               onConflict: "user_id,category,item",
-            }
+            },
           )
           .select();
 
@@ -237,7 +277,7 @@ fastify.post(
       reply.code(400).send({ error: error.message });
       return;
     }
-  }
+  },
 );
 
 // POST Utilities
@@ -263,7 +303,7 @@ fastify.post(
             },
             {
               onConflict: "user_id,category,item",
-            }
+            },
           )
           .select();
 
@@ -284,7 +324,7 @@ fastify.post(
             },
             {
               onConflict: "user_id,category,item",
-            }
+            },
           )
           .select();
 
@@ -304,7 +344,7 @@ fastify.post(
             },
             {
               onConflict: "user_id,category,item",
-            }
+            },
           )
           .select();
 
@@ -317,7 +357,7 @@ fastify.post(
       reply.code(400).send({ error: error.message });
       return;
     }
-  }
+  },
 );
 
 // POST Services and Subscriptions
@@ -343,7 +383,7 @@ fastify.post(
             },
             {
               onConflict: "user_id,category,item",
-            }
+            },
           )
           .select();
 
@@ -364,7 +404,7 @@ fastify.post(
             },
             {
               onConflict: "user_id,category,item",
-            }
+            },
           )
           .select();
 
@@ -384,7 +424,7 @@ fastify.post(
             },
             {
               onConflict: "user_id,category,item",
-            }
+            },
           )
           .select();
 
@@ -397,7 +437,7 @@ fastify.post(
       reply.code(400).send({ error: error.message });
       return;
     }
-  }
+  },
 );
 
 // POST Transport and Travel
@@ -423,7 +463,7 @@ fastify.post(
             },
             {
               onConflict: "user_id,category,item",
-            }
+            },
           )
           .select();
 
@@ -444,7 +484,7 @@ fastify.post(
             },
             {
               onConflict: "user_id,category,item",
-            }
+            },
           )
           .select();
 
@@ -464,7 +504,7 @@ fastify.post(
             },
             {
               onConflict: "user_id,category,item",
-            }
+            },
           )
           .select();
 
@@ -484,7 +524,7 @@ fastify.post(
             },
             {
               onConflict: "user_id,category,item",
-            }
+            },
           )
           .select();
 
@@ -504,7 +544,7 @@ fastify.post(
             },
             {
               onConflict: "user_id,category,item",
-            }
+            },
           )
           .select();
 
@@ -524,7 +564,7 @@ fastify.post(
             },
             {
               onConflict: "user_id,category,item",
-            }
+            },
           )
           .select();
 
@@ -537,7 +577,7 @@ fastify.post(
       reply.code(400).send({ error: error.message });
       return;
     }
-  }
+  },
 );
 
 // POST Personal Costs
@@ -563,7 +603,7 @@ fastify.post(
             },
             {
               onConflict: "user_id,category,item",
-            }
+            },
           )
           .select();
 
@@ -584,7 +624,7 @@ fastify.post(
             },
             {
               onConflict: "user_id,category,item",
-            }
+            },
           )
           .select();
 
@@ -597,7 +637,7 @@ fastify.post(
       reply.code(400).send({ error: error.message });
       return;
     }
-  }
+  },
 );
 
 // POST Pets
@@ -623,7 +663,7 @@ fastify.post(
             },
             {
               onConflict: "user_id,category,item",
-            }
+            },
           )
           .select();
 
@@ -644,7 +684,7 @@ fastify.post(
             },
             {
               onConflict: "user_id,category,item",
-            }
+            },
           )
           .select();
 
@@ -657,7 +697,7 @@ fastify.post(
       reply.code(400).send({ error: error.message });
       return;
     }
-  }
+  },
 );
 
 // POST Food and Shopping
@@ -683,7 +723,7 @@ fastify.post(
             },
             {
               onConflict: "user_id,category,item",
-            }
+            },
           )
           .select();
 
@@ -704,7 +744,7 @@ fastify.post(
             },
             {
               onConflict: "user_id,category,item",
-            }
+            },
           )
           .select();
 
@@ -717,7 +757,7 @@ fastify.post(
       reply.code(400).send({ error: error.message });
       return;
     }
-  }
+  },
 );
 
 // POST Accounts and Savings
@@ -743,7 +783,7 @@ fastify.post(
             },
             {
               onConflict: "user_id,category,item",
-            }
+            },
           )
           .select();
 
@@ -764,7 +804,7 @@ fastify.post(
             },
             {
               onConflict: "user_id,category,item",
-            }
+            },
           )
           .select();
 
@@ -777,7 +817,7 @@ fastify.post(
       reply.code(400).send({ error: error.message });
       return;
     }
-  }
+  },
 );
 
 // Server start
