@@ -4,6 +4,9 @@ import Fastify from "fastify";
 import cors from "@fastify/cors";
 import fastifyRateLimit from "@fastify/rate-limit";
 import helmet from "@fastify/helmet";
+import path from "path";
+import { fileURLToPath } from "url";
+import { mkdirSync } from "fs";
 import {
   incomeSchema,
   homeExpenseSchema,
@@ -16,13 +19,65 @@ import {
   accountsAndSavingsSchema,
 } from "./schemas.js";
 
+// Supabase client setup
 const supabase = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_SERVICE_KEY,
 );
 
+// Setup logs directory
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+try {
+  mkdirSync(path.join(__dirname, "logs"), { recursive: true });
+} catch (err) {
+  if (err.code !== "EEXIST") {
+    console.error("Warning: Could not create logs directory:", err.message);
+  }
+}
+
+// Log configuration
 const fastify = Fastify({
-  logger: true,
+  logger:
+    process.env.NODE_ENV === "production"
+      ? {
+          // PRODUCTION
+          level: "info",
+          file: path.join(__dirname, "logs", "app.log"),
+          serializers: {
+            // Customise request logging
+            req(req) {
+              return {
+                method: req.method,
+                url: req.url,
+                ip: req.ip,
+                headers: {
+                  "user-agent": req.headers["user-agent"],
+                },
+              };
+            },
+            // Customise response logging
+            res(res) {
+              return {
+                statusCode: res.statusCode,
+              };
+            },
+          },
+        }
+      : {
+          // DEVELOPMENT
+          level: "info",
+          transport: {
+            target: "pino-pretty",
+            options: {
+              colorize: true,
+              translateTime: "dd-mm-yy HH:MM:ss",
+              ignore: "pid,hostname",
+              singleLine: false,
+            },
+          },
+        },
 });
 
 // CORS registration
@@ -95,7 +150,23 @@ fastify.addHook("onRequest", (request, reply, done) => {
 async function verifyAuth(request, reply) {
   const authHeader = request.headers.authorization;
 
+  const logContext = {
+    ip: request.ip,
+    userAgent: request.headers["user-agent"],
+    path: request.url,
+    method: request.method,
+  };
+
   if (!authHeader) {
+    fastify.log.warn(
+      {
+        event: "AUTH_FAILED",
+        reason: "NO_AUTH_HEADER",
+        ...logContext,
+      },
+      "Unauthorised access attempt - no authorisation header",
+    );
+
     reply.code(401).send({ error: "No authorization header provided" });
     return;
   }
@@ -108,9 +179,31 @@ async function verifyAuth(request, reply) {
   } = await supabase.auth.getUser(token);
 
   if (error || !user) {
+    fastify.log.warn(
+      {
+        event: "AUTH_FAILED",
+        reason: error ? "INVALID_TOKEN" : "USER_NOT_FOUND",
+        errorMessage: error?.message,
+        tokenPrefix: token.substring(0, 10) + "...",
+        ...logContext,
+      },
+      "Unauthorised access attempt - invalid or expired token",
+    );
+
     reply.code(401).send({ error: "Invalid or expired token" });
     return;
   }
+
+  fastify.log.info(
+    {
+      event: "AUTH_SUCCESS",
+      userID: user.id,
+      userEmail: user.email,
+      ...logContext,
+    },
+    "User authenticated successfully",
+  );
+
   request.user = user;
 }
 
