@@ -83,6 +83,10 @@ const fastify = Fastify({
 // CORS registration
 await fastify.register(cors, {
   origin: process.env.CLIENT_URL,
+  credentials: true,
+  methods: ["GET", "POST"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  maxAge: 86400,
 });
 
 // Helmet security headers
