@@ -211,6 +211,30 @@ async function verifyAuth(request, reply) {
   request.user = user;
 }
 
+// Sanitised error handling
+function sendSafeError(reply, error, statusCode = 500) {
+  fastify.log.error(
+    {
+      error: error.message,
+      stack: error.stack,
+      code: error.code,
+    },
+    "Error occurred during processing",
+  );
+
+  const sanitisedMessages = {
+    400: "Invalid request data",
+    401: "Authentication required",
+    403: "Access denied",
+    404: "Resource not found",
+    500: "An internal error occurred",
+  };
+
+  reply.code(statusCode).send({
+    error: sanitisedMessages[statusCode] || "An error occurred",
+  });
+}
+
 // GET Budget
 fastify.get(
   "/api/budget",
@@ -223,7 +247,7 @@ fastify.get(
       .eq("user_id", userId);
 
     if (error) {
-      reply.code(500).send({ error: error.message });
+      sendSafeError(reply, error, 500);
       return;
     }
 
@@ -290,7 +314,7 @@ fastify.post(
 
       return { income: updates };
     } catch (error) {
-      reply.code(400).send({ error: error.message });
+      sendSafeError(reply, error, 500);
       return;
     }
   },
@@ -371,7 +395,7 @@ fastify.post(
 
       return { homeExpense: updates };
     } catch (error) {
-      reply.code(400).send({ error: error.message });
+      sendSafeError(reply, error, 500);
       return;
     }
   },
@@ -451,7 +475,7 @@ fastify.post(
 
       return { utilities: updates };
     } catch (error) {
-      reply.code(400).send({ error: error.message });
+      sendSafeError(reply, error, 500);
       return;
     }
   },
@@ -531,7 +555,7 @@ fastify.post(
 
       return { servicesAndSubscriptions: updates };
     } catch (error) {
-      reply.code(400).send({ error: error.message });
+      sendSafeError(reply, error, 500);
       return;
     }
   },
@@ -671,7 +695,7 @@ fastify.post(
 
       return { transportAndTravel: updates };
     } catch (error) {
-      reply.code(400).send({ error: error.message });
+      sendSafeError(reply, error, 500);
       return;
     }
   },
@@ -731,7 +755,7 @@ fastify.post(
 
       return { personal: updates };
     } catch (error) {
-      reply.code(400).send({ error: error.message });
+      sendSafeError(reply, error, 500);
       return;
     }
   },
@@ -791,7 +815,7 @@ fastify.post(
 
       return { pets: updates };
     } catch (error) {
-      reply.code(400).send({ error: error.message });
+      sendSafeError(reply, error, 500);
       return;
     }
   },
@@ -851,7 +875,7 @@ fastify.post(
 
       return { foodAndShopping: updates };
     } catch (error) {
-      reply.code(400).send({ error: error.message });
+      sendSafeError(reply, error, 500);
       return;
     }
   },
@@ -911,7 +935,7 @@ fastify.post(
 
       return { accountsAndSavings: updates };
     } catch (error) {
-      reply.code(400).send({ error: error.message });
+      sendSafeError(reply, error, 500);
       return;
     }
   },
