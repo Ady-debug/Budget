@@ -80,6 +80,30 @@ const fastify = Fastify({
         },
 });
 
+// Sanitised error handling
+function sendSafeError(reply, error, statusCode = 500) {
+  fastify.log.error(
+    {
+      error: error.message,
+      stack: error.stack,
+      code: error.code,
+    },
+    "Error occurred during processing",
+  );
+
+  const sanitisedMessages = {
+    400: "Invalid request data",
+    401: "Authentication required",
+    403: "Access denied",
+    404: "Resource not found",
+    500: "An internal error occurred",
+  };
+
+  reply.code(statusCode).send({
+    error: sanitisedMessages[statusCode] || "An error occurred",
+  });
+}
+
 // CORS registration
 await fastify.register(cors, {
   origin: process.env.CLIENT_URL,
@@ -150,6 +174,53 @@ fastify.addHook("onRequest", (request, reply, done) => {
   done();
 });
 
+// Content-Type validation and JSON parser
+fastify.addContentTypeParser(
+  "application/json",
+  { parseAs: "string" },
+  function (_req, body, done) {
+    try {
+      //Parse JSON and check size to prevent memory exhaustion attacks
+      if (body.length > 1048576) {
+        // 1MB
+        const error = new Error("Request body too large");
+        error.statusCode = 413;
+        done(error, undefined);
+        return;
+      }
+
+      const json = JSON.parse(body);
+      done(null, json);
+    } catch (err) {
+      err.statusCode = 400;
+      err.message = "Invalid JSON format";
+      done(err, undefined);
+    }
+  },
+);
+
+// Reject inproper Content-Type for POST requests
+fastify.addHook("preHandler", (request, reply, done) => {
+  if (request.method === "POST") {
+    const contentType = request.headers["content-type"];
+
+    if (!contentType) {
+      reply.code(415).send({
+        error: "Content-Type header is required for POST requests",
+      });
+      return;
+    }
+
+    if (!contentType.includes("application/json")) {
+      reply.code(415).send({
+        error: "Content-Type must be application/json",
+      });
+      return;
+    }
+  }
+  done();
+});
+
 // Auth Verification Middleware
 async function verifyAuth(request, reply) {
   const authHeader = request.headers.authorization;
@@ -209,30 +280,6 @@ async function verifyAuth(request, reply) {
   );
 
   request.user = user;
-}
-
-// Sanitised error handling
-function sendSafeError(reply, error, statusCode = 500) {
-  fastify.log.error(
-    {
-      error: error.message,
-      stack: error.stack,
-      code: error.code,
-    },
-    "Error occurred during processing",
-  );
-
-  const sanitisedMessages = {
-    400: "Invalid request data",
-    401: "Authentication required",
-    403: "Access denied",
-    404: "Resource not found",
-    500: "An internal error occurred",
-  };
-
-  reply.code(statusCode).send({
-    error: sanitisedMessages[statusCode] || "An error occurred",
-  });
 }
 
 // GET Budget
