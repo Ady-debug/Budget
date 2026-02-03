@@ -18,6 +18,7 @@ import {
   foodAndShoppingSchema,
   accountsAndSavingsSchema,
 } from "./schemas.js";
+import { request } from "http";
 
 // Supabase client setup
 const supabase = createClient(
@@ -39,6 +40,7 @@ try {
 
 // Log configuration
 const fastify = Fastify({
+  disableRequestLogging: true,
   logger:
     process.env.NODE_ENV === "production"
       ? {
@@ -78,6 +80,41 @@ const fastify = Fastify({
             },
           },
         },
+});
+
+// Custom request logging (skip OPTIONS)
+fastify.addHook("onRequest", async (request, reply) => {
+  if (request.method !== "OPTIONS") {
+    request.log.info(
+      {
+        reqId: request.id,
+        req: {
+          method: request.method,
+          url: request.url,
+          host: request.headers.host,
+          remoteAddress: request.ip,
+          remotePort: request.socket.remotePort,
+        },
+      },
+      "incoming request",
+    );
+  }
+});
+
+// Custom response logging (skip OPTIONS)
+fastify.addHook("onResponse", async (request, reply) => {
+  if (request.method !== "OPTIONS") {
+    request.log.info(
+      {
+        reqId: request.id,
+        res: {
+          statusCode: reply.statusCode,
+        },
+        responseTime: reply.getResponseTime(),
+      },
+      "request completed",
+    );
+  }
 });
 
 // Sanitised error handling
