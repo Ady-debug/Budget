@@ -374,7 +374,6 @@ fastify.post(
   async (request, reply) => {
     const userId = request.user.id;
     const data = request.body.homeExpense;
-    console.log(data);
 
     try {
       const updates = [];
