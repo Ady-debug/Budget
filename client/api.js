@@ -13,7 +13,7 @@ async function getAuthHeaders() {
   };
 }
 
-function validateField(value, fieldName) {
+export function validateField(value, fieldName) {
   const numValue = parseFloat(value);
 
   if (isNaN(numValue)) {
@@ -51,7 +51,7 @@ export async function updateIncome(income) {
     const response = await axios.post(
       `${SERVER_URL}/api/income`,
       { income },
-      { headers }
+      { headers },
     );
     return response.data;
   } catch (error) {
@@ -74,7 +74,7 @@ export async function updateHomeExpense(homeExpense) {
     const response = await axios.post(
       `${SERVER_URL}/api/home_expense`,
       { homeExpense },
-      { headers }
+      { headers },
     );
     return response.data;
   } catch (error) {
@@ -97,7 +97,7 @@ export async function updateUtilities(utilities) {
     const response = await axios.post(
       `${SERVER_URL}/api/utilities`,
       { utilities },
-      { headers }
+      { headers },
     );
     return response.data;
   } catch (error) {
@@ -123,15 +123,15 @@ export async function updateServicesAndSubscriptions(servicesAndSubscriptions) {
     const response = await axios.post(
       `${SERVER_URL}/api/servicesandsubscriptions`,
       { servicesAndSubscriptions },
-      { headers }
+      { headers },
     );
     return response.data;
   } catch (error) {
     console.error(
-      `Error updating services and subscriptions: ${error.message}`
+      `Error updating services and subscriptions: ${error.message}`,
     );
     throw new Error(
-      "There was an error saving your services and subscriptions"
+      "There was an error saving your services and subscriptions",
     );
   }
 }
@@ -153,13 +153,13 @@ export async function updateTransportAndTravel(transportAndTravel) {
     const response = await axios.post(
       `${SERVER_URL}/api/transportandtravel`,
       { transportAndTravel },
-      { headers }
+      { headers },
     );
     return response.data;
   } catch (error) {
     console.error(`Error updating transport and travel: ${error.message}`);
     throw new Error(
-      "There was an error saving your transport and travel costs"
+      "There was an error saving your transport and travel costs",
     );
   }
 }
@@ -177,7 +177,7 @@ export async function updatePersonal(personal) {
     const response = await axios.post(
       `${SERVER_URL}/api/personal`,
       { personal },
-      { headers }
+      { headers },
     );
     return response.data;
   } catch (error) {
@@ -199,7 +199,7 @@ export async function updatePets(pets) {
     const response = await axios.post(
       `${SERVER_URL}/api/pets`,
       { pets },
-      { headers }
+      { headers },
     );
     return response.data;
   } catch (error) {
@@ -221,7 +221,7 @@ export async function updateFoodAndShopping(foodAndShopping) {
     const response = await axios.post(
       `${SERVER_URL}/api/foodandshopping`,
       { foodAndShopping },
-      { headers }
+      { headers },
     );
     return response.data;
   } catch (error) {
@@ -243,13 +243,13 @@ export async function updateAccountsAndSavings(accountsAndSavings) {
     const response = await axios.post(
       `${SERVER_URL}/api/accountsandsavings`,
       { accountsAndSavings },
-      { headers }
+      { headers },
     );
     return response.data;
   } catch (error) {
     console.error(`Error updating accountsAndSavings: ${error.message}`);
     throw new Error(
-      "There was an error saving your accounts and savings costs"
+      "There was an error saving your accounts and savings costs",
     );
   }
 }
