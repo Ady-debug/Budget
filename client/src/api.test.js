@@ -1,4 +1,28 @@
-import { validateField } from "../api";
+import {
+  validateField,
+  getBudgetData,
+  updateIncome,
+  updateHomeExpense,
+  updateUtilities,
+  updateServicesAndSubscriptions,
+  updateTransportAndTravel,
+  updatePersonal,
+  updatePets,
+  updateFoodAndShopping,
+  updateAccountsAndSavings,
+} from "../api";
+import axios from "axios";
+import { supabase } from "./supabaseClient";
+
+// External dependancy mock setup
+vi.mock("axios");
+vi.mock("./supabaseClient", () => ({
+  supabase: {
+    auth: {
+      getSession: vi.fn(),
+    },
+  },
+}));
 
 describe("validateField - Null values", () => {
   it("Should throw an error when the value is null", () => {
