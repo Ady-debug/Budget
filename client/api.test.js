@@ -25,6 +25,7 @@ vi.mock("./src/supabaseClient.js", () => ({
   },
 }));
 
+// Validation tests
 describe("validateField - Null values", () => {
   it("Should throw an error when the value is null", () => {
     expect(() => validateField(null, "income")).toThrow(
@@ -149,5 +150,30 @@ describe("updateIncome", () => {
         },
       );
     });
+
+    it("Should handle income with zero values", async () => {
+      // Arrange: Setup mock response and income data to be sent
+      const income = { wage: 0, otherIncome: 0 };
+      const mockResponseData = [{ success: true }];
+      axios.post.mockResolvedValue({ data: mockResponseData });
+
+      // Act: Call the function
+      const result = await updateIncome(income);
+
+      // Assert: Call should be successful
+      expect(result).toEqual(mockResponseData);
+    });
+  });
+
+  describe("API errors", () => {
+    (it("Should throw an error when the API call fails"),
+      async () => {
+        const income = { wage: 1120, otherIncome: 50 };
+        axios.post.mockRejectedValue(new Error("Network error"));
+
+        await expect(updateIncome(income)).rejects.toThrow(
+          "There was an error saving your income",
+        );
+      });
   });
 });
