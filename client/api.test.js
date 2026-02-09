@@ -13,6 +13,7 @@ import {
 } from "./api";
 import axios from "axios";
 import { supabase } from "./src/supabaseClient";
+import { beforeEach, describe } from "vitest";
 
 // External dependancy mock setup
 vi.mock("axios");
@@ -57,6 +58,7 @@ describe("validateField - Valid values", () => {
   });
 });
 
+// getBudgetData tests
 describe("getBudgetData", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -108,5 +110,44 @@ describe("getBudgetData", () => {
     await expect(getBudgetData()).rejects.toThrow(
       "There was an error getting your stored budget figures",
     );
+  });
+});
+
+// updateIncome tests
+describe("updateIncome", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    // Setup default auth mock called in getAuthHeaders
+    supabase.auth.getSession.mockResolvedValue({
+      data: {
+        session: {
+          access_token: "mock-token-123",
+        },
+      },
+    });
+  });
+
+  describe("Successful updates", () => {
+    it("Should update budget data on successful API call", async () => {
+      // Arrange: Setup mock response and income data to be sent
+      const income = { wage: 3000, otherIncome: 99.5 };
+      const mockResponseData = [{ success: true, id: 123 }];
+      axios.post.mockResolvedValue({ data: mockResponseData });
+
+      // Act: Call the function
+      const result = await updateIncome(income);
+
+      // Assert: Check results
+      expect(result).toEqual(mockResponseData);
+      expect(axios.post).toHaveBeenCalledWith(
+        expect.stringContaining("/api/income"),
+        { income },
+        {
+          headers: {
+            Authorization: "Bearer mock-token-123",
+          },
+        },
+      );
+    });
   });
 });
