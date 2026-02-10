@@ -13,7 +13,7 @@ import {
 } from "./api";
 import axios from "axios";
 import { supabase } from "./src/supabaseClient";
-import { beforeEach, describe } from "vitest";
+import { beforeEach, describe, expect } from "vitest";
 
 // External dependancy mock setup
 vi.mock("axios");
@@ -162,6 +162,18 @@ describe("updateIncome", () => {
 
       // Assert: Call should be successful
       expect(result).toEqual(mockResponseData);
+    });
+  });
+
+  describe("validation integration", () => {
+    it("should validate wage before API call", async () => {
+      // Arrange: Setup mock data
+      const income = { wage: -100, otherIncome: 0 };
+      // Act & Assert: Call the function and check API was not called due to validation
+      await expect(updateIncome(income)).rejects.toThrow(
+        "Wage amount must be more or equal to 0",
+      );
+      expect(axios.post).not.toHaveBeenCalled();
     });
   });
 
