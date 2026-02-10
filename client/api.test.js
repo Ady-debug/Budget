@@ -26,36 +26,36 @@ vi.mock("./src/supabaseClient.js", () => ({
 }));
 
 // Validation tests
-describe("validateField - Null values", () => {
-  it("Should throw an error when the value is null", () => {
-    expect(() => validateField(null, "income")).toThrow(
-      "Enter a number for your income",
-    );
+describe("validateField", () => {
+  describe("when value is invalid", () => {
+    it("should throw an error when value is null", () => {
+      expect(() => validateField(null, "income")).toThrow(
+        "Enter a number for your income",
+      );
+    });
+    it("should throw an error when value is less than zero", () => {
+      expect(() => validateField(-0.99999, "income")).toThrow(
+        "income amount must be more or equal to 0",
+      );
+    });
+    it("should throw an error when value is more than 99999999.99", () => {
+      expect(() => validateField(99999999.999, "income")).toThrow(
+        "Please enter an accurate amount, the figure is too high",
+      );
+    });
   });
-});
 
-describe("validateField - Negative values", () => {
-  it("Should throw an error when the value is less than zero", () => {
-    expect(() => validateField(-0.99999, "income")).toThrow(
-      "income amount must be more or equal to 0",
-    );
-  });
-});
-
-describe("validateField - Max values", () => {
-  it("Should throw an error when the value is more than 99999999.99", () => {
-    expect(() => validateField(99999999.999, "income")).toThrow(
-      "Please enter an accurate amount, the figure is too high",
-    );
-  });
-});
-
-describe("validateField - Valid values", () => {
-  it("Should not throw an error when the value within bounds", () => {
-    expect(() => validateField(100.5, "income")).not.toThrow();
-  });
-  it("Should not throw an error when the value is 0", () => {
-    expect(() => validateField(0, "income")).not.toThrow();
+  describe("when value is valid", () => {
+    it("should not throw an error when value within bounds", () => {
+      expect(() => validateField(100.5, "income")).not.toThrow();
+    });
+    it("should not throw an error when value is 0", () => {
+      expect(() => validateField(0, "income")).not.toThrow();
+    });
+    (it("should not throw an error when at maximum boundary"),
+      () => {
+        expect(() => validateField(99999999.99, "income")).not.toThrow();
+      });
   });
 });
 
@@ -63,18 +63,18 @@ describe("validateField - Valid values", () => {
 describe("getBudgetData", () => {
   beforeEach(() => {
     vi.clearAllMocks();
-  });
 
-  // Setup default auth mock called in getAuthHeaders
-  supabase.auth.getSession.mockResolvedValue({
-    data: {
-      session: {
-        access_token: "mock-token-123",
+    // Setup default auth mock called in getAuthHeaders
+    supabase.auth.getSession.mockResolvedValue({
+      data: {
+        session: {
+          access_token: "mock-token-123",
+        },
       },
-    },
+    });
   });
 
-  it("Should return budget data on successful API call", async () => {
+  it("should return budget data on successful API call", async () => {
     // Arrange: Setup mock response
     const mockBudgetData = {
       income: { wage: 3000, otherIncome: 99.5 },
@@ -103,7 +103,7 @@ describe("getBudgetData", () => {
     expect(axios.get).toHaveBeenCalledTimes(1);
   });
 
-  it("Should throw an error when API call fails", async () => {
+  it("should throw an error when API call fails", async () => {
     // Arrange: Setup mock to reject
     axios.get.mockRejectedValue(new Error("Network error"));
 
@@ -128,8 +128,8 @@ describe("updateIncome", () => {
     });
   });
 
-  describe("Successful updates", () => {
-    it("Should update budget data on successful API call", async () => {
+  describe("successful updates", () => {
+    it("should update budget data on successful API call", async () => {
       // Arrange: Setup mock response and income data to be sent
       const income = { wage: 3000, otherIncome: 99.5 };
       const mockResponseData = [{ success: true, id: 123 }];
@@ -151,9 +151,9 @@ describe("updateIncome", () => {
       );
     });
 
-    it("Should handle income with zero values", async () => {
+    it("should handle income with zero values", async () => {
       // Arrange: Setup mock response and income data to be sent
-      const income = { wage: 0, otherIncome: 0 };
+      const income = { wage: "0", otherIncome: 0 };
       const mockResponseData = [{ success: true }];
       axios.post.mockResolvedValue({ data: mockResponseData });
 
@@ -166,11 +166,13 @@ describe("updateIncome", () => {
   });
 
   describe("API errors", () => {
-    (it("Should throw an error when the API call fails"),
+    (it("should throw an error when the API call fails"),
+      // Arrange: Setup data and mock rejection
       async () => {
         const income = { wage: 1120, otherIncome: 50 };
         axios.post.mockRejectedValue(new Error("Network error"));
 
+        // Act & Assert: Call the function and set expected resonse
         await expect(updateIncome(income)).rejects.toThrow(
           "There was an error saving your income",
         );
