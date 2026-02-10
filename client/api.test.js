@@ -178,16 +178,15 @@ describe("updateIncome", () => {
   });
 
   describe("API errors", () => {
-    (it("should throw an error when the API call fails"),
-      // Arrange: Setup data and mock rejection
-      async () => {
-        const income = { wage: 1120, otherIncome: 50 };
-        axios.post.mockRejectedValue(new Error("Network error"));
+    it("should throw an error when the API call fails", // Arrange: Setup data and mock rejection
+    async () => {
+      const income = { wage: 1120, otherIncome: 50 };
+      axios.post.mockRejectedValue(new Error("Network error"));
 
-        // Act & Assert: Call the function and set expected resonse
-        await expect(updateIncome(income)).rejects.toThrow(
-          "There was an error saving your income",
-        );
-      });
+      // Act & Assert: Call the function and set expected resonse
+      await expect(updateIncome(income)).rejects.toThrow(
+        "There was an error saving your income",
+      );
+    });
   });
 });
