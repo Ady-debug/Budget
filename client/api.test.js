@@ -129,7 +129,7 @@ describe("updateIncome", () => {
   });
 
   describe("successful updates", () => {
-    it("should update budget data on successful API call", async () => {
+    it("should update income data on successful API call", async () => {
       // Arrange: Setup mock response and income data to be sent
       const income = { wage: 3000, otherIncome: 99.5 };
       const mockResponseData = [{ success: true, id: 123 }];
@@ -178,14 +178,107 @@ describe("updateIncome", () => {
   });
 
   describe("API errors", () => {
-    it("should throw an error when the API call fails", // Arrange: Setup data and mock rejection
-    async () => {
+    it("should throw an error when the API call fails", async () => {
+      // Arrange: Setup data and mock rejection
       const income = { wage: 1120, otherIncome: 50 };
       axios.post.mockRejectedValue(new Error("Network error"));
 
       // Act & Assert: Call the function and set expected resonse
       await expect(updateIncome(income)).rejects.toThrow(
         "There was an error saving your income",
+      );
+    });
+  });
+});
+
+// updateHomeExpense tests
+describe("updateHomeExpense", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    // Setup default auth mock called in getAuthHeaders
+    supabase.auth.getSession.mockResolvedValue({
+      data: {
+        session: {
+          access_token: "mock-token-123",
+        },
+      },
+    });
+  });
+
+  describe("successful updates", () => {
+    it("should update home expense data on successful API call", async () => {
+      // Arrange: Setup mock response and income data to be sent
+      const homeExpense = {
+        mortgage: 1230,
+        councilTax: 115.57,
+        homeInsurance: 19.99,
+      };
+      const mockResponseData = [{ success: true, id: 123 }];
+      axios.post.mockResolvedValue({ data: mockResponseData });
+
+      // Act: Call the function
+      const result = await updateHomeExpense(homeExpense);
+
+      // Assert: Check results
+      expect(result).toEqual(mockResponseData);
+      expect(axios.post).toHaveBeenCalledWith(
+        expect.stringContaining("/api/home_expense"),
+        { homeExpense },
+        {
+          headers: {
+            Authorization: "Bearer mock-token-123",
+          },
+        },
+      );
+    });
+
+    it("should handle home expense with zero values", async () => {
+      // Arrange: Setup mock response and income data to be sent
+      const homeExpense = {
+        mortgage: 1230,
+        councilTax: 115.57,
+        homeInsurance: 0,
+      };
+      const mockResponseData = [{ success: true }];
+      axios.post.mockResolvedValue({ data: mockResponseData });
+
+      // Act: Call the function
+      const result = await updateHomeExpense(homeExpense);
+
+      // Assert: Call should be successful
+      expect(result).toEqual(mockResponseData);
+    });
+  });
+
+  describe("validation integration", () => {
+    it("should validate wage before API call", async () => {
+      // Arrange: Setup mock data
+      const homeExpense = {
+        mortgage: 1230,
+        councilTax: -1000,
+        homeInsurance: 19.99,
+      };
+      // Act & Assert: Call the function and check API was not called due to validation
+      await expect(updateHomeExpense(homeExpense)).rejects.toThrow(
+        "Council Tax amount must be more or equal to 0",
+      );
+      expect(axios.post).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("API errors", () => {
+    it("should throw an error when the API call fails", async () => {
+      // Arrange: Setup data and mock rejection
+      const homeExpense = {
+        mortgage: 1230,
+        councilTax: 115.57,
+        homeInsurance: 19.99,
+      };
+      axios.post.mockRejectedValue(new Error("Network error"));
+
+      // Act & Assert: Call the function and set expected resonse
+      await expect(updateHomeExpense(homeExpense)).rejects.toThrow(
+        "There was an error saving your home expense",
       );
     });
   });
