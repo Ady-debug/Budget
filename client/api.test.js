@@ -251,7 +251,7 @@ describe("updateHomeExpense", () => {
   });
 
   describe("validation integration", () => {
-    it("should validate wage before API call", async () => {
+    it("should validate council tax before API call", async () => {
       // Arrange: Setup mock data
       const homeExpense = {
         mortgage: 1230,
@@ -279,6 +279,99 @@ describe("updateHomeExpense", () => {
       // Act & Assert: Call the function and set expected resonse
       await expect(updateHomeExpense(homeExpense)).rejects.toThrow(
         "There was an error saving your home expense",
+      );
+    });
+  });
+});
+
+// updateUtilities tests
+describe("updateUtilities", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    // Setup default auth mock called in getAuthHeaders
+    supabase.auth.getSession.mockResolvedValue({
+      data: {
+        session: {
+          access_token: "mock-token-123",
+        },
+      },
+    });
+  });
+
+  describe("successful updates", () => {
+    it("should update utilities data on successful API call", async () => {
+      // Arrange: Setup mock response and income data to be sent
+      const utilities = {
+        gas: 80,
+        electricity: 125.45,
+        water: 49.99,
+      };
+      const mockResponseData = [{ success: true, id: 123 }];
+      axios.post.mockResolvedValue({ data: mockResponseData });
+
+      // Act: Call the function
+      const result = await updateUtilities(utilities);
+
+      // Assert: Check results
+      expect(result).toEqual(mockResponseData);
+      expect(axios.post).toHaveBeenCalledWith(
+        expect.stringContaining("/api/utilities"),
+        { utilities },
+        {
+          headers: {
+            Authorization: "Bearer mock-token-123",
+          },
+        },
+      );
+    });
+
+    it("should handle utilities with zero values", async () => {
+      // Arrange: Setup mock response and income data to be sent
+      const utilities = {
+        gas: 80,
+        electricity: 125.45,
+        water: 49.99,
+      };
+      const mockResponseData = [{ success: true }];
+      axios.post.mockResolvedValue({ data: mockResponseData });
+
+      // Act: Call the function
+      const result = await updateUtilities(utilities);
+
+      // Assert: Call should be successful
+      expect(result).toEqual(mockResponseData);
+    });
+  });
+
+  describe("validation integration", () => {
+    it("should validate water before API call", async () => {
+      // Arrange: Setup mock data
+      const utilities = {
+        gas: 80,
+        electricity: 125.45,
+        water: "Water",
+      };
+      // Act & Assert: Call the function and check API was not called due to validation
+      await expect(updateUtilities(utilities)).rejects.toThrow(
+        "Enter a number for your Water",
+      );
+      expect(axios.post).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("API errors", () => {
+    it("should throw an error when the API call fails", async () => {
+      // Arrange: Setup data and mock rejection
+      const utilities = {
+        gas: 80,
+        electricity: 125.45,
+        water: 49.99,
+      };
+      axios.post.mockRejectedValue(new Error("Network error"));
+
+      // Act & Assert: Call the function and set expected resonse
+      await expect(updateUtilities(utilities)).rejects.toThrow(
+        "There was an error saving your utilities",
       );
     });
   });
