@@ -580,3 +580,80 @@ describe("updateTransportAndTravel", () => {
     });
   });
 });
+
+// updatePersonal tests
+describe("updatePersonal", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    // Setup default auth mock called in getAuthHeaders
+    supabase.auth.getSession.mockResolvedValue({
+      data: {
+        session: {
+          access_token: "mock-token-123",
+        },
+      },
+    });
+  });
+
+  describe("successful updates", () => {
+    it("should update personal data on successful API call", async () => {
+      // Arrange: Setup mock response and income data to be sent
+      const personal = { clothingAndFootwear: 100, hairdressing: 23 };
+      const mockResponseData = [{ success: true, id: 123 }];
+      axios.post.mockResolvedValue({ data: mockResponseData });
+
+      // Act: Call the function
+      const result = await updatePersonal(personal);
+
+      // Assert: Check results
+      expect(result).toEqual(mockResponseData);
+      expect(axios.post).toHaveBeenCalledWith(
+        expect.stringContaining("/api/personal"),
+        { personal },
+        {
+          headers: {
+            Authorization: "Bearer mock-token-123",
+          },
+        },
+      );
+    });
+
+    it("should handle personal costs with zero values", async () => {
+      // Arrange: Setup mock response and income data to be sent
+      const personal = { clothingAndFootwear: 100, hairdressing: 0 };
+      const mockResponseData = [{ success: true }];
+      axios.post.mockResolvedValue({ data: mockResponseData });
+
+      // Act: Call the function
+      const result = await updatePersonal(personal);
+
+      // Assert: Call should be successful
+      expect(result).toEqual(mockResponseData);
+    });
+  });
+
+  describe("validation integration", () => {
+    it("should validate wage before API call", async () => {
+      // Arrange: Setup mock data
+      const personal = { clothingAndFootwear: false, hairdressing: 23 };
+      // Act & Assert: Call the function and check API was not called due to validation
+      await expect(updatePersonal(personal)).rejects.toThrow(
+        "Enter a number for your Clothing and Footwear",
+      );
+      expect(axios.post).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("API errors", () => {
+    it("should throw an error when the API call fails", async () => {
+      // Arrange: Setup data and mock rejection
+      const personal = { clothingAndFootwear: 100, hairdressing: 23 };
+      axios.post.mockRejectedValue(new Error("Network error"));
+
+      // Act & Assert: Call the function and set expected resonse
+      await expect(updatePersonal(personal)).rejects.toThrow(
+        "There was an error saving your personal costs",
+      );
+    });
+  });
+});
