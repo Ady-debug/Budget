@@ -657,3 +657,80 @@ describe("updatePersonal", () => {
     });
   });
 });
+
+// updatePets tests
+describe("updatePets", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    // Setup default auth mock called in getAuthHeaders
+    supabase.auth.getSession.mockResolvedValue({
+      data: {
+        session: {
+          access_token: "mock-token-123",
+        },
+      },
+    });
+  });
+
+  describe("successful updates", () => {
+    it("should update pets data on successful API call", async () => {
+      // Arrange: Setup mock response and income data to be sent
+      const pets = { petFood: 50, insurance: 23 };
+      const mockResponseData = [{ success: true, id: 123 }];
+      axios.post.mockResolvedValue({ data: mockResponseData });
+
+      // Act: Call the function
+      const result = await updatePets(pets);
+
+      // Assert: Check results
+      expect(result).toEqual(mockResponseData);
+      expect(axios.post).toHaveBeenCalledWith(
+        expect.stringContaining("/api/pets"),
+        { pets },
+        {
+          headers: {
+            Authorization: "Bearer mock-token-123",
+          },
+        },
+      );
+    });
+
+    it("should handle pets costs with zero values", async () => {
+      // Arrange: Setup mock response and income data to be sent
+      const pets = { petFood: 50, insurance: 0 };
+      const mockResponseData = [{ success: true }];
+      axios.post.mockResolvedValue({ data: mockResponseData });
+
+      // Act: Call the function
+      const result = await updatePets(pets);
+
+      // Assert: Call should be successful
+      expect(result).toEqual(mockResponseData);
+    });
+  });
+
+  describe("validation integration", () => {
+    it("should validate wage before API call", async () => {
+      // Arrange: Setup mock data
+      const pets = { petFood: "Yes", insurance: 23 };
+      // Act & Assert: Call the function and check API was not called due to validation
+      await expect(updatePets(pets)).rejects.toThrow(
+        "Enter a number for your Pet Food",
+      );
+      expect(axios.post).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("API errors", () => {
+    it("should throw an error when the API call fails", async () => {
+      // Arrange: Setup data and mock rejection
+      const pets = { petFood: 100, insurance: 23 };
+      axios.post.mockRejectedValue(new Error("Network error"));
+
+      // Act & Assert: Call the function and set expected resonse
+      await expect(updatePets(pets)).rejects.toThrow(
+        "There was an error saving your pet costs",
+      );
+    });
+  });
+});
