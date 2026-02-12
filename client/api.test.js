@@ -597,7 +597,7 @@ describe("updatePersonal", () => {
 
   describe("successful updates", () => {
     it("should update personal data on successful API call", async () => {
-      // Arrange: Setup mock response and income data to be sent
+      // Arrange: Setup mock response and data to be sent
       const personal = { clothingAndFootwear: 100, hairdressing: 23 };
       const mockResponseData = [{ success: true, id: 123 }];
       axios.post.mockResolvedValue({ data: mockResponseData });
@@ -619,7 +619,7 @@ describe("updatePersonal", () => {
     });
 
     it("should handle personal costs with zero values", async () => {
-      // Arrange: Setup mock response and income data to be sent
+      // Arrange: Setup mock response and data to be sent
       const personal = { clothingAndFootwear: 100, hairdressing: 0 };
       const mockResponseData = [{ success: true }];
       axios.post.mockResolvedValue({ data: mockResponseData });
@@ -633,7 +633,7 @@ describe("updatePersonal", () => {
   });
 
   describe("validation integration", () => {
-    it("should validate wage before API call", async () => {
+    it("should validate clothing and footwear before API call", async () => {
       // Arrange: Setup mock data
       const personal = { clothingAndFootwear: false, hairdressing: 23 };
       // Act & Assert: Call the function and check API was not called due to validation
@@ -674,7 +674,7 @@ describe("updatePets", () => {
 
   describe("successful updates", () => {
     it("should update pets data on successful API call", async () => {
-      // Arrange: Setup mock response and income data to be sent
+      // Arrange: Setup mock response and data to be sent
       const pets = { petFood: 50, insurance: 23 };
       const mockResponseData = [{ success: true, id: 123 }];
       axios.post.mockResolvedValue({ data: mockResponseData });
@@ -696,7 +696,7 @@ describe("updatePets", () => {
     });
 
     it("should handle pets costs with zero values", async () => {
-      // Arrange: Setup mock response and income data to be sent
+      // Arrange: Setup mock response and data to be sent
       const pets = { petFood: 50, insurance: 0 };
       const mockResponseData = [{ success: true }];
       axios.post.mockResolvedValue({ data: mockResponseData });
@@ -710,7 +710,7 @@ describe("updatePets", () => {
   });
 
   describe("validation integration", () => {
-    it("should validate wage before API call", async () => {
+    it("should validate pet food before API call", async () => {
       // Arrange: Setup mock data
       const pets = { petFood: "Yes", insurance: 23 };
       // Act & Assert: Call the function and check API was not called due to validation
@@ -730,6 +730,85 @@ describe("updatePets", () => {
       // Act & Assert: Call the function and set expected resonse
       await expect(updatePets(pets)).rejects.toThrow(
         "There was an error saving your pet costs",
+      );
+    });
+  });
+});
+
+// updateFoodAndShopping tests
+describe("updateFoodAndShopping", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    // Setup default auth mock called in getAuthHeaders
+    supabase.auth.getSession.mockResolvedValue({
+      data: {
+        session: {
+          access_token: "mock-token-123",
+        },
+      },
+    });
+  });
+
+  describe("successful updates", () => {
+    it("should update food and shopping data on successful API call", async () => {
+      // Arrange: Setup mock response and data to be sent
+      const foodAndShopping = { supermarketShopping: 250, mealsOut: 100 };
+      const mockResponseData = [{ success: true, id: 123 }];
+      axios.post.mockResolvedValue({ data: mockResponseData });
+
+      // Act: Call the function
+      const result = await updateFoodAndShopping(foodAndShopping);
+
+      // Assert: Check results
+      expect(result).toEqual(mockResponseData);
+      expect(axios.post).toHaveBeenCalledWith(
+        expect.stringContaining("/api/foodandshopping"),
+        { foodAndShopping },
+        {
+          headers: {
+            Authorization: "Bearer mock-token-123",
+          },
+        },
+      );
+    });
+
+    it("should handle food and shopping costs with zero values", async () => {
+      // Arrange: Setup mock response data to be sent
+      const foodAndShopping = { supermarketShopping: 250, mealsOut: 100 };
+      const mockResponseData = [{ success: true }];
+      axios.post.mockResolvedValue({ data: mockResponseData });
+
+      // Act: Call the function
+      const result = await updateFoodAndShopping(foodAndShopping);
+
+      // Assert: Call should be successful
+      expect(result).toEqual(mockResponseData);
+    });
+  });
+
+  describe("validation integration", () => {
+    it("should validate meals out before API call", async () => {
+      // Arrange: Setup mock data
+      const foodAndShopping = {
+        supermarketShopping: 250,
+        mealsOut: "Not needed",
+      }; // Act & Assert: Call the function and check API was not called due to validation
+      await expect(updateFoodAndShopping(foodAndShopping)).rejects.toThrow(
+        "Enter a number for your Meals Out",
+      );
+      expect(axios.post).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("API errors", () => {
+    it("should throw an error when the API call fails", async () => {
+      // Arrange: Setup data and mock rejection
+      const foodAndShopping = { supermarketShopping: 250, mealsOut: 100 };
+      axios.post.mockRejectedValue(new Error("Network error"));
+
+      // Act & Assert: Call the function and set expected resonse
+      await expect(updateFoodAndShopping(foodAndShopping)).rejects.toThrow(
+        "There was an error saving your food and shopping costs",
       );
     });
   });
