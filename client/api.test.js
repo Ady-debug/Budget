@@ -165,7 +165,25 @@ describe("updateIncome", () => {
     });
   });
 
-  describe("validation integration", () => {
+  describe("validation errors", () => {
+    it("should throw an error when income is null", async () => {
+      // Arrange/Act/Assert
+      await expect(updateIncome(null)).rejects.toThrow(
+        "Please enter your income",
+      );
+      //Assert
+      expect(axios.post).not.toHaveBeenCalled();
+    });
+
+    it("should throw an error when income is not an object", async () => {
+      // Arrange/Act/Assert
+      expect(updateIncome("String")).rejects.toThrow(
+        "Please enter your income",
+      );
+      //Assert
+      expect(axios.post).not.toHaveBeenCalled();
+    });
+
     it("should validate wage before API call", async () => {
       // Arrange: Setup mock data
       const income = { wage: -100, otherIncome: 0 };
@@ -176,18 +194,18 @@ describe("updateIncome", () => {
       expect(axios.post).not.toHaveBeenCalled();
     });
   });
+});
 
-  describe("API errors", () => {
-    it("should throw an error when the API call fails", async () => {
-      // Arrange: Setup data and mock rejection
-      const income = { wage: 1120, otherIncome: 50 };
-      axios.post.mockRejectedValue(new Error("Network error"));
+describe("API errors", () => {
+  it("should throw an error when the API call fails", async () => {
+    // Arrange: Setup data and mock rejection
+    const income = { wage: 1120, otherIncome: 50 };
+    axios.post.mockRejectedValue(new Error("Network error"));
 
-      // Act & Assert: Call the function and set expected resonse
-      await expect(updateIncome(income)).rejects.toThrow(
-        "There was an error saving your income",
-      );
-    });
+    // Act & Assert: Call the function and set expected resonse
+    await expect(updateIncome(income)).rejects.toThrow(
+      "There was an error saving your income",
+    );
   });
 });
 
@@ -250,7 +268,24 @@ describe("updateHomeExpense", () => {
     });
   });
 
-  describe("validation integration", () => {
+  describe("validation errors", () => {
+    it("should throw an error when home expense is undefined", async () => {
+      // Arrange/Act/Assert
+      await expect(updateHomeExpense(undefined)).rejects.toThrow(
+        "Please enter your home expenses",
+      );
+      //Assert
+      expect(axios.post).not.toHaveBeenCalled();
+    });
+
+    it("should throw an error when income is not an object", async () => {
+      // Arrange/Act/Assert
+      expect(updateHomeExpense("String")).rejects.toThrow(
+        "Please enter your home expenses",
+      );
+      //Assert
+      expect(axios.post).not.toHaveBeenCalled();
+    });
     it("should validate council tax before API call", async () => {
       // Arrange: Setup mock data
       const homeExpense = {
@@ -343,7 +378,24 @@ describe("updateUtilities", () => {
     });
   });
 
-  describe("validation integration", () => {
+  describe("validation errors", () => {
+    it("should throw an error when utilities is null", async () => {
+      // Arrange/Act/Assert
+      await expect(updateUtilities(null)).rejects.toThrow(
+        "Please enter your utility expenses",
+      );
+      //Assert
+      expect(axios.post).not.toHaveBeenCalled();
+    });
+
+    it("should throw an error when utilities is not an object", async () => {
+      // Arrange/Act/Assert
+      expect(updateUtilities("String")).rejects.toThrow(
+        "Please enter your utility expenses",
+      );
+      //Assert
+      expect(axios.post).not.toHaveBeenCalled();
+    });
     it("should validate water before API call", async () => {
       // Arrange: Setup mock data
       const utilities = {
@@ -422,34 +474,54 @@ describe("updateServicesAndSubscriptions", () => {
 
     it("should handle services and subscriptions with zero values", async () => {
       // Arrange: Setup mock response and data to be sent
-      const utilities = {
-        gas: 0,
-        electricity: 185.45,
-        water: 49.99,
+      const servicesAndSubscriptions = {
+        phone: 35,
+        broadband: 37.82,
+        subscriptions: 9.99,
       };
       const mockResponseData = [{ success: true }];
       axios.post.mockResolvedValue({ data: mockResponseData });
 
       // Act: Call the function
-      const result = await updateUtilities(utilities);
+      const result = await updateServicesAndSubscriptions(
+        servicesAndSubscriptions,
+      );
 
       // Assert: Call should be successful
       expect(result).toEqual(mockResponseData);
     });
   });
 
-  describe("validation integration", () => {
-    it("should validate water before API call", async () => {
+  describe("validation errors", () => {
+    it("should throw an error when services and subscriptions are undefined", async () => {
+      // Arrange/Act/Assert
+      await expect(updateServicesAndSubscriptions(undefined)).rejects.toThrow(
+        "Please enter your service and subscription expenses",
+      );
+      //Assert
+      expect(axios.post).not.toHaveBeenCalled();
+    });
+
+    it("should throw an error when services and subscriptions are not an object", async () => {
+      // Arrange/Act/Assert
+      expect(updateServicesAndSubscriptions("String")).rejects.toThrow(
+        "Please enter your service and subscription expenses",
+      );
+      //Assert
+      expect(axios.post).not.toHaveBeenCalled();
+    });
+
+    it("should validate subscriptions before API call", async () => {
       // Arrange: Setup mock data
-      const utilities = {
-        gas: 80,
-        electricity: 125.45,
-        water: "Water",
+      const servicesAndSubscriptions = {
+        phone: 35,
+        broadband: 37.82,
+        subscriptions: "None",
       };
       // Act & Assert: Call the function and check API was not called due to validation
-      await expect(updateUtilities(utilities)).rejects.toThrow(
-        "Enter a number for your Water",
-      );
+      await expect(
+        updateServicesAndSubscriptions(servicesAndSubscriptions),
+      ).rejects.toThrow("Enter a number for your Subscriptions");
       expect(axios.post).not.toHaveBeenCalled();
     });
   });
@@ -518,7 +590,7 @@ describe("updateTransportAndTravel", () => {
       );
     });
 
-    it("should handle services and subscriptions with zero values", async () => {
+    it("should handle transoprt costs with zero values", async () => {
       // Arrange: Setup mock response and data to be sent
       const transportAndTravel = {
         vehicleInsurance: 0,
@@ -539,7 +611,25 @@ describe("updateTransportAndTravel", () => {
     });
   });
 
-  describe("validation integration", () => {
+  describe("validation errors", () => {
+    it("should throw an error when transport and travel is null", async () => {
+      // Arrange/Act/Assert
+      await expect(updateTransportAndTravel(null)).rejects.toThrow(
+        "Please enter your transport and travel costs",
+      );
+      //Assert
+      expect(axios.post).not.toHaveBeenCalled();
+    });
+
+    it("should throw an error when transport and travel are not an object", async () => {
+      // Arrange/Act/Assert
+      expect(updateTransportAndTravel("String")).rejects.toThrow(
+        "Please enter your transport and travel costs",
+      );
+      //Assert
+      expect(axios.post).not.toHaveBeenCalled();
+    });
+
     it("should validate road tax before API call", async () => {
       // Arrange: Setup mock data
       const transportAndTravel = {
@@ -632,7 +722,25 @@ describe("updatePersonal", () => {
     });
   });
 
-  describe("validation integration", () => {
+  describe("validation errors", () => {
+    it("should throw an error when personal is null", async () => {
+      // Arrange/Act/Assert
+      await expect(updatePersonal(null)).rejects.toThrow(
+        "Please enter your personal costs",
+      );
+      //Assert
+      expect(axios.post).not.toHaveBeenCalled();
+    });
+
+    it("should throw an error when personal is not an object", async () => {
+      // Arrange/Act/Assert
+      expect(updatePersonal("String")).rejects.toThrow(
+        "Please enter your personal costs",
+      );
+      //Assert
+      expect(axios.post).not.toHaveBeenCalled();
+    });
+
     it("should validate clothing and footwear before API call", async () => {
       // Arrange: Setup mock data
       const personal = { clothingAndFootwear: false, hairdressing: 23 };
@@ -709,7 +817,25 @@ describe("updatePets", () => {
     });
   });
 
-  describe("validation integration", () => {
+  describe("validation errors", () => {
+    it("should throw an error when pets are null", async () => {
+      // Arrange/Act/Assert
+      await expect(updatePets(null)).rejects.toThrow(
+        "Please enter your pet costs",
+      );
+      //Assert
+      expect(axios.post).not.toHaveBeenCalled();
+    });
+
+    it("should throw an error when personal is not an object", async () => {
+      // Arrange/Act/Assert
+      expect(updatePets("String")).rejects.toThrow(
+        "Please enter your pet costs",
+      );
+      //Assert
+      expect(axios.post).not.toHaveBeenCalled();
+    });
+
     it("should validate pet food before API call", async () => {
       // Arrange: Setup mock data
       const pets = { petFood: "Yes", insurance: 23 };
@@ -786,7 +912,25 @@ describe("updateFoodAndShopping", () => {
     });
   });
 
-  describe("validation integration", () => {
+  describe("validation errors", () => {
+    it("should throw an error when food and shopping are undefined", async () => {
+      // Arrange/Act/Assert
+      await expect(updateFoodAndShopping(undefined)).rejects.toThrow(
+        "Please enter your food and shopping costs",
+      );
+      //Assert
+      expect(axios.post).not.toHaveBeenCalled();
+    });
+
+    it("should throw an error when personal is not an object", async () => {
+      // Arrange/Act/Assert
+      expect(updateFoodAndShopping("String")).rejects.toThrow(
+        "Please enter your food and shopping costs",
+      );
+      //Assert
+      expect(axios.post).not.toHaveBeenCalled();
+    });
+
     it("should validate meals out before API call", async () => {
       // Arrange: Setup mock data
       const foodAndShopping = {
@@ -865,7 +1009,25 @@ describe("updateAccountsAndSavings", () => {
     });
   });
 
-  describe("validation integration", () => {
+  describe("validation errors", () => {
+    it("should throw an error when accounts and savings are undefined", async () => {
+      // Arrange/Act/Assert
+      await expect(updateAccountsAndSavings(undefined)).rejects.toThrow(
+        "Please enter your accounts and savings costs",
+      );
+      //Assert
+      expect(axios.post).not.toHaveBeenCalled();
+    });
+
+    it("should throw an error when personal is not an object", async () => {
+      // Arrange/Act/Assert
+      expect(updateAccountsAndSavings("String")).rejects.toThrow(
+        "Please enter your accounts and savings costs",
+      );
+      //Assert
+      expect(axios.post).not.toHaveBeenCalled();
+    });
+
     it("should validate savings before API call", async () => {
       // Arrange: Setup mock data
       const accountsAndSavings = {
