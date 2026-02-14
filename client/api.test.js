@@ -813,3 +813,84 @@ describe("updateFoodAndShopping", () => {
     });
   });
 });
+
+// updateAccountsAndSavings tests
+describe("updateAccountsAndSavings", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    // Setup default auth mock called in getAuthHeaders
+    supabase.auth.getSession.mockResolvedValue({
+      data: {
+        session: {
+          access_token: "mock-token-123",
+        },
+      },
+    });
+  });
+
+  describe("successful updates", () => {
+    it("should update accounts and savings data on successful API call", async () => {
+      // Arrange: Setup mock response and data to be sent
+      const accountsAndSavings = { accountFees: 23, savings: 100 };
+      const mockResponseData = [{ success: true, id: 123 }];
+      axios.post.mockResolvedValue({ data: mockResponseData });
+
+      // Act: Call the function
+      const result = await updateAccountsAndSavings(accountsAndSavings);
+
+      // Assert: Check results
+      expect(result).toEqual(mockResponseData);
+      expect(axios.post).toHaveBeenCalledWith(
+        expect.stringContaining("/api/accountsandsavings"),
+        { accountsAndSavings },
+        {
+          headers: {
+            Authorization: "Bearer mock-token-123",
+          },
+        },
+      );
+    });
+
+    it("should handle account costs with zero values", async () => {
+      // Arrange: Setup mock response data to be sent
+      const accountsAndSavings = { accountFees: 0, savings: 100 };
+      const mockResponseData = [{ success: true }];
+      axios.post.mockResolvedValue({ data: mockResponseData });
+
+      // Act: Call the function
+      const result = await updateAccountsAndSavings(accountsAndSavings);
+
+      // Assert: Call should be successful
+      expect(result).toEqual(mockResponseData);
+    });
+  });
+
+  describe("validation integration", () => {
+    it("should validate savings before API call", async () => {
+      // Arrange: Setup mock data
+      const accountsAndSavings = {
+        accountFees: 23,
+        savings: false,
+      }; // Act & Assert: Call the function and check API was not called due to validation
+      await expect(
+        updateAccountsAndSavings(accountsAndSavings),
+      ).rejects.toThrow("Enter a number for your Savings");
+      expect(axios.post).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("API errors", () => {
+    it("should throw an error when the API call fails", async () => {
+      // Arrange: Setup data and mock rejection
+      const accountsAndSavings = { accountFees: 250, savings: 100 };
+      axios.post.mockRejectedValue(new Error("Network error"));
+
+      // Act & Assert: Call the function and set expected resonse
+      await expect(
+        updateAccountsAndSavings(accountsAndSavings),
+      ).rejects.toThrow(
+        "There was an error saving your accounts and savings costs",
+      );
+    });
+  });
+});
